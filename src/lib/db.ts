@@ -1,14 +1,21 @@
-import { neon } from '@neondatabase/serverless';
+import postgres from 'postgres';
+
+let sql: ReturnType<typeof postgres> | null = null;
 
 function getDb() {
-  const url = process.env.DATABASE_URL;
-  if (!url) return null;
-  return neon(url);
+  if (!sql) {
+    sql = postgres({
+      host: '/tmp',
+      database: 'ielts_vocab',
+      user: 'victorsun',
+      max: 5,
+    });
+  }
+  return sql;
 }
 
 export async function initDb() {
   const sql = getDb();
-  if (!sql) return;
   await sql`
     CREATE TABLE IF NOT EXISTS articles (
       id SERIAL PRIMARY KEY,
@@ -26,8 +33,8 @@ export interface ArticleRecord {
   title: string;
   content: string;
   words: object[];
-  date: string;
-  created_at: string;
+  date: Date;
+  created_at: Date;
 }
 
 export async function saveArticle(
@@ -36,39 +43,37 @@ export async function saveArticle(
   words: object[]
 ): Promise<ArticleRecord | null> {
   const sql = getDb();
-  if (!sql) return null;
   await initDb();
-  const rows = await sql`
+  const rows = await sql<ArticleRecord[]>`
     INSERT INTO articles (title, content, words, date)
-    VALUES (${title}, ${content}, ${JSON.stringify(words)}, CURRENT_DATE)
+    VALUES (${title}, ${content}, ${JSON.stringify(words)}::jsonb, CURRENT_DATE)
     RETURNING *
   `;
-  return rows[0] as ArticleRecord;
+  return rows[0];
 }
 
 export async function getArticlesByDate(date: string): Promise<ArticleRecord[]> {
   const sql = getDb();
-  if (!sql) return [];
-  const rows = await sql`
+  await initDb();
+  const rows = await sql<ArticleRecord[]>`
     SELECT * FROM articles WHERE date = ${date} ORDER BY created_at DESC
   `;
-  return rows as ArticleRecord[];
+  return rows;
 }
 
 export async function getAllDates(): Promise<string[]> {
   const sql = getDb();
-  if (!sql) return [];
-  const rows = await sql`
+  await initDb();
+  const rows = await sql<{ date: Date }[]>`
     SELECT DISTINCT date FROM articles ORDER BY date DESC
   `;
-  return rows.map((r: { date: string }) =>
+  return rows.map((r) =>
     new Date(r.date).toISOString().split('T')[0]
   );
 }
 
 export async function deleteArticle(id: number): Promise<boolean> {
   const sql = getDb();
-  if (!sql) return false;
   const rows = await sql`DELETE FROM articles WHERE id = ${id}`;
   return rows.length > 0;
 }

@@ -16,7 +16,7 @@ export default function ClientApp({ initialDates }: { initialDates: string[] }) 
     new Date().toISOString().split('T')[0]
   );
   const [savedArticles, setSavedArticles] = useState<
-    { date: string; title: string; id: number; words: WordEntry[] }[]
+    { date: string; title: string; id: number; content: string; words: WordEntry[] }[]
   >([]);
   const [exportingAudio, setExportingAudio] = useState(false);
   const [savedExports, setSavedExports] = useState<
@@ -172,6 +172,13 @@ export default function ClientApp({ initialDates }: { initialDates: string[] }) 
     [setSavedArticles]
   );
 
+  const handleLoadArticle = useCallback((article: { content: string; words: WordEntry[]; title: string }) => {
+    setText(article.content);
+    setWords(article.words);
+    setSaved(false);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, []);
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-zinc-50 to-zinc-100">
       <div className="max-w-5xl mx-auto px-4 py-8">
@@ -277,9 +284,13 @@ export default function ClientApp({ initialDates }: { initialDates: string[] }) 
                       className="p-4 bg-zinc-50 rounded-xl border border-zinc-100"
                     >
                       <div className="flex items-center justify-between mb-2">
-                        <span className="text-sm font-medium text-zinc-800 truncate flex-1">
+                        <button
+                          onClick={() => handleLoadArticle(article)}
+                          className="text-sm font-medium text-blue-600 hover:text-blue-800 hover:underline truncate flex-1 text-left transition-colors"
+                          title="Click to load into text area"
+                        >
                           {article.title || 'Untitled'}
-                        </span>
+                        </button>
                         <div className="flex items-center gap-1">
                           <button
                             onClick={() => handleExportArticle(article.id, article.title)}

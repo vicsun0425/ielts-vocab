@@ -19,7 +19,17 @@ export default function ClientApp({ initialDates }: { initialDates: string[] }) 
     { date: string; title: string; id: number; words: WordEntry[] }[]
   >([]);
   const [exportingAudio, setExportingAudio] = useState(false);
+  const [savedExports, setSavedExports] = useState<
+    { id: string; title: string; wordCount: number; withAudio: boolean; createdAt: string }[]
+  >([]);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  useEffect(() => {
+    fetch(`/api/export?list=true`)
+      .then((r) => r.json())
+      .then((data) => setSavedExports(data))
+      .catch(() => setSavedExports([]));
+  }, []);
 
   useEffect(() => {
     fetch(`/api/articles?date=${selectedDate}`)
@@ -114,24 +124,33 @@ export default function ClientApp({ initialDates }: { initialDates: string[] }) 
     if (!words.length) return;
     setExportingAudio(true);
     try {
+      const title = text.slice(0, 50).trim() || `vocabulary-${Date.now()}`;
       const res = await fetch('/api/export', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ words }),
+        body: JSON.stringify({ words, title, withAudio: true }),
       });
-      const blob = await res.blob();
+      const data = await res.json();
+      // Download the file
+      const dlRes = await fetch(`/api/export?download=true&id=${data.id}`);
+      const blob = await dlRes.blob();
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = 'ielts-vocabulary.html';
+      a.download = data.id;
       a.click();
       URL.revokeObjectURL(url);
+      // Add to saved exports list
+      setSavedExports((prev) => [
+        { id: data.id, title, wordCount: data.wordCount, withAudio: true, createdAt: new Date().toISOString() },
+        ...prev,
+      ]);
     } catch {
       // export failed
     } finally {
       setExportingAudio(false);
     }
-  }, [words]);
+  }, [words, text]);
 
   const handleExportArticle = useCallback(async (id: number, title: string) => {
     const res = await fetch(`/api/articles?export=html&audio=true&id=${id}`);
@@ -277,6 +296,43 @@ export default function ClientApp({ initialDates }: { initialDates: string[] }) 
                         </div>
                       </div>
                       <WordList words={article.words} />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Saved exports */}
+            {savedExports.length > 0 && (
+              <div className="bg-white rounded-2xl border border-zinc-200 shadow-sm p-5">
+                <h3 className="text-sm font-semibold text-zinc-700 mb-3">
+                  Saved exports ({savedExports.length})
+                </h3>
+                <div className="space-y-2">
+                  {savedExports.map((exp) => (
+                    <div
+                      key={exp.id}
+                      className="flex items-center justify-between p-3 bg-zinc-50 rounded-xl border border-zinc-100"
+                    >
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium text-zinc-800 truncate">
+                          {exp.title}
+                        </p>
+                        <p className="text-xs text-zinc-400">
+                          {exp.wordCount} words · {exp.withAudio ? 'with audio' : 'web only'} · {new Date(exp.createdAt).toLocaleDateString()}
+                        </p>
+                      </div>
+                      <button
+                        onClick={() => {
+                          const a = document.createElement('a');
+                          a.href = `/api/export?download=true&id=${encodeURIComponent(exp.id)}`;
+                          a.download = exp.id;
+                          a.click();
+                        }}
+                        className="flex-shrink-0 ml-3 px-3 py-1.5 bg-green-600 hover:bg-green-700 text-white rounded-lg text-xs font-medium transition-colors"
+                      >
+                        Download
+                      </button>
                     </div>
                   ))}
                 </div>

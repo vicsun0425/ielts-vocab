@@ -81,3 +81,7 @@ export async function deleteArticle(id: number): Promise<boolean> {
   const rows = await sql`DELETE FROM articles WHERE id = ${id}`;
   return rows.length > 0;
 }
+
+export async function deleteArticleById(id: number): Promise<boolean> {
+  return deleteArticle(id);
+}

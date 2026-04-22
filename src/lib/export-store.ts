@@ -89,3 +89,30 @@ export function deleteExport(filename: string): boolean {
     return false;
   }
 }
+
+export function deleteExportsByTitle(title: string): boolean {
+  try {
+    const files = readdirSync(EXPORTS_DIR);
+    let deleted = false;
+    for (const file of files) {
+      if (!file.endsWith('.html')) continue;
+      const metaPath = path.join(EXPORTS_DIR, file.replace('.html', '.meta.json'));
+      try {
+        if (existsSync(metaPath)) {
+          const meta = JSON.parse(readFileSync(metaPath, 'utf-8'));
+          if (meta.title === title) {
+            const filepath = path.join(EXPORTS_DIR, file);
+            require('fs').unlinkSync(filepath);
+            require('fs').unlinkSync(metaPath);
+            deleted = true;
+          }
+        }
+      } catch {
+        // ignore
+      }
+    }
+    return deleted;
+  } catch {
+    return false;
+  }
+}

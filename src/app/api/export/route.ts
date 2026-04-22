@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { generateHtmlWithAudio, generateVocabularyHtml } from '@/lib/pdf-export';
-import { saveExport, listExports, getExportFile } from '@/lib/export-store';
+import { saveExport, listExports, getExportFile, deleteExportsByTitle } from '@/lib/export-store';
 
 export async function GET(req: NextRequest) {
   const id = req.nextUrl.searchParams.get('id');
@@ -37,9 +37,13 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'No words provided' }, { status: 400 });
   }
 
+  const safeTitle = title || `vocabulary-${Date.now()}`;
+
+  // Delete old exports with same title (dedup by article)
+  deleteExportsByTitle(safeTitle);
+
   const timestamp = Date.now();
-  const filename = `vocabulary-${timestamp}.html`;
-  const safeTitle = title || `vocabulary-${timestamp}`;
+  const filename = `${safeTitle.replace(/[^a-zA-Z0-9_一-鿿-]/g, '_')}-${timestamp}.html`;
 
   let html: string;
   if (withAudio) {

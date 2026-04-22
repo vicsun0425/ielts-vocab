@@ -64,16 +64,32 @@ export async function lookupWord(word: string): Promise<WordEntry | null> {
     let example = '';
     let pos = '';
 
+    // First pass: find a definition that has an example
     for (const meaning of entry.meanings || []) {
-      pos = meaning.partOfSpeech || '';
       for (const def of meaning.definitions || []) {
-        if (def.definition) {
+        if (def.definition && def.example) {
           definition = def.definition;
-          example = def.example || '';
+          example = def.example;
+          pos = meaning.partOfSpeech || '';
           break;
         }
       }
-      if (definition) break;
+      if (definition && example) break;
+    }
+
+    // Second pass: if no example found, just take any definition
+    if (!definition) {
+      for (const meaning of entry.meanings || []) {
+        for (const def of meaning.definitions || []) {
+          if (def.definition) {
+            definition = def.definition;
+            example = def.example || '';
+            pos = meaning.partOfSpeech || '';
+            break;
+          }
+        }
+        if (definition) break;
+      }
     }
 
     if (!definition) return null;

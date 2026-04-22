@@ -275,15 +275,15 @@ export default function ClientApp({ initialDates }: { initialDates: string[] }) 
             {savedArticles.length > 0 && (
               <div className="bg-white rounded-2xl border border-zinc-200 shadow-sm p-5">
                 <h3 className="text-sm font-semibold text-zinc-700 mb-3">
-                  Saved articles on {selectedDate}
+                  Saved articles on {selectedDate} ({savedArticles.length})
                 </h3>
-                <div className="space-y-3">
+                <div className="space-y-4">
                   {savedArticles.map((article) => (
                     <div
                       key={article.id}
-                      className="p-4 bg-zinc-50 rounded-xl border border-zinc-100"
+                      className="bg-zinc-50 rounded-xl border border-zinc-100 overflow-hidden"
                     >
-                      <div className="flex items-center justify-between mb-2">
+                      <div className="flex items-center justify-between p-3 border-b border-zinc-200">
                         <button
                           onClick={() => handleLoadArticle(article)}
                           className="text-sm font-medium text-blue-600 hover:text-blue-800 hover:underline truncate flex-1 text-left transition-colors"
@@ -291,7 +291,10 @@ export default function ClientApp({ initialDates }: { initialDates: string[] }) 
                         >
                           {article.title || 'Untitled'}
                         </button>
-                        <div className="flex items-center gap-1">
+                        <span className="text-xs text-zinc-400 ml-3 flex-shrink-0">
+                          {article.words.length} words
+                        </span>
+                        <div className="flex items-center gap-1 ml-2">
                           <button
                             onClick={() => handleExportArticle(article.id, article.title)}
                             className="text-xs bg-purple-100 text-purple-700 hover:bg-purple-200 px-2 py-1 rounded-lg transition-colors"
@@ -306,7 +309,9 @@ export default function ClientApp({ initialDates }: { initialDates: string[] }) 
                           </button>
                         </div>
                       </div>
-                      <WordList words={article.words} />
+                      <div className="p-3">
+                        <WordList words={article.words} />
+                      </div>
                     </div>
                   ))}
                 </div>

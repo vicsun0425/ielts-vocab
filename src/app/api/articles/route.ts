@@ -112,6 +112,18 @@ export async function POST(req: NextRequest) {
   if (!content) {
     return NextResponse.json({ error: 'Content required' }, { status: 400 });
   }
+
+  const { saveArticle, getArticlesByDate, deleteArticleById } = await import('@/lib/db');
+
+  // Check if same content already exists today, delete old one
+  const today = new Date().toISOString().split('T')[0];
+  const existing = await getArticlesByDate(today);
+  for (const article of existing) {
+    if (article.content === content) {
+      await deleteArticleById(article.id);
+    }
+  }
+
   const article = await saveArticle(title || '', content, words || []);
   if (!article) {
     return NextResponse.json({ error: 'Database not configured' }, { status: 500 });

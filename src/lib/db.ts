@@ -32,9 +32,13 @@ export interface ArticleRecord {
   id: number;
   title: string;
   content: string;
-  words: object[];
+  words: string | object[];
   date: Date;
   created_at: Date;
+}
+
+export function parseWords(words: ArticleRecord['words']): object[] {
+  return typeof words === 'string' ? JSON.parse(words) : (words as object[]);
 }
 
 export async function saveArticle(
@@ -58,7 +62,7 @@ export async function getArticlesByDate(date: string): Promise<ArticleRecord[]> 
   const rows = await sql<ArticleRecord[]>`
     SELECT * FROM articles WHERE date = ${date} ORDER BY created_at DESC
   `;
-  return rows;
+  return rows.map((r) => ({ ...r, words: parseWords(r.words) }));
 }
 
 export async function getAllDates(): Promise<string[]> {

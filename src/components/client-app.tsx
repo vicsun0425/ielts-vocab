@@ -178,6 +178,14 @@ export default function ClientApp({ initialDates }: { initialDates: string[] }) 
                       Save
                     </button>
                   )}
+                  {words.length > 0 && (
+                    <button
+                      onClick={() => (window.location.href = '/api/articles?export=html')}
+                      className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg text-sm font-medium transition-colors"
+                    >
+                      Export
+                    </button>
+                  )}
                   {saved && (
                     <span className="px-4 py-2 text-sm text-green-600 bg-green-50 rounded-lg">
                       Saved!

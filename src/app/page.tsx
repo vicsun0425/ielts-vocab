@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
-import { getAllDates } from './lib/db';
-import ClientApp from './components/client-app';
+import { getAllDates } from '@/lib/db';
+import ClientApp from '@/components/client-app';
 
 export const metadata: Metadata = {
   title: 'IELTS Vocabulary Tool',

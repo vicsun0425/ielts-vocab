@@ -1,5 +1,3 @@
-'use server';
-
 import { KNOWN_WORDS } from './known-words';
 
 export interface WordEntry {

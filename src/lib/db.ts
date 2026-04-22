@@ -50,7 +50,7 @@ export async function saveArticle(
   await initDb();
   const rows = await sql<ArticleRecord[]>`
     INSERT INTO articles (title, content, words, date)
-    VALUES (${title}, ${content}, ${JSON.stringify(words)}::jsonb, CURRENT_DATE)
+    VALUES (${title}, ${content}, ${words}::jsonb, CURRENT_DATE)
     RETURNING *
   `;
   return rows[0];

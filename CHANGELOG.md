@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.4.2] - 2026-04-22
+
+### Fix Dev Server Freeze
+- Set `turbopack.root` in next.config.ts to point to the correct project directory, preventing Turbopack from resolving modules from the parent workspace
+- Removed stray `package.json` and `package-lock.json` from the parent directory that were confusing Turbopack's workspace root detection
+- Fixed `saveArticle` double-encoding words: removed `JSON.stringify()` since postgres.js already serializes JS objects to JSONB
+- Converted existing database records from double-encoded string format back to proper JSONB arrays
+
+## [0.4.1] - 2026-04-22
+
+### Memory & Concurrency Fixes
+- Audio generation now processes words in batches of 3 instead of all at once, preventing memory spikes
+- Switched from synchronous `execSync` to async `exec` with `Promise`-based concurrency control
+- Export buttons now guard against double-clicks/concurrent calls
+- Article export button shows disabled state while generating
+
 ## [0.4.0] - 2026-04-22
 
 ### Saved Exports with Download Links

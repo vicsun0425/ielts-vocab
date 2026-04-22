@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.2.0] - 2026-04-22
+
+### OCR Screenshot Support
+- Upload images via drag & drop, file picker, or paste button
+- Tesseract.js OCR extracts English text from screenshots automatically
+- Extracted text automatically appended to the textarea
+- Added "Clear" button to reset input
+- Retains existing paste-text functionality
+
 ## [0.1.0] - 2026-04-22
 
 ### Initial Release

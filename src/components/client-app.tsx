@@ -19,6 +19,8 @@ export default function ClientApp({ initialDates }: { initialDates: string[] }) 
     { date: string; title: string; id: number; content: string; words: WordEntry[] }[]
   >([]);
   const [exportingAudio, setExportingAudio] = useState(false);
+  const [exportingArticleId, setExportingArticleId] = useState<number | null>(null);
+  const [downloadedId, setDownloadedId] = useState<string | null>(null);
   const [savedExports, setSavedExports] = useState<
     { id: string; title: string; wordCount: number; withAudio: boolean; createdAt: string }[]
   >([]);
@@ -117,7 +119,12 @@ export default function ClientApp({ initialDates }: { initialDates: string[] }) 
   }, [text, words, selectedDate]);
 
   const handleExportAll = useCallback(() => {
-    window.location.href = '/api/articles?export=html';
+    const a = document.createElement('a');
+    a.href = '/api/articles?export=html';
+    a.download = 'ielts-vocabulary.html';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
   }, []);
 
   const handleExportWithAudio = useCallback(async () => {
@@ -153,16 +160,22 @@ export default function ClientApp({ initialDates }: { initialDates: string[] }) 
   }, [words, text]);
 
   const handleExportArticle = useCallback(async (id: number, title: string) => {
-    const res = await fetch(`/api/articles?export=html&audio=true&id=${id}`);
-    if (!res.ok) return;
-    const blob = await res.blob();
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `${(title || 'vocabulary').replace(/[^a-zA-Z0-9_一-鿿]/g, '_')}.html`;
-    a.click();
-    URL.revokeObjectURL(url);
-  }, []);
+    if (exportingArticleId !== null) return;
+    setExportingArticleId(id);
+    try {
+      const res = await fetch(`/api/articles?export=html&audio=true&id=${id}`);
+      if (!res.ok) return;
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${(title || 'vocabulary').replace(/[^a-zA-Z0-9_一-鿿]/g, '_')}.html`;
+      a.click();
+      URL.revokeObjectURL(url);
+    } finally {
+      setExportingArticleId(null);
+    }
+  }, [exportingArticleId]);
 
   const handleDelete = useCallback(
     async (id: number) => {
@@ -245,19 +258,28 @@ export default function ClientApp({ initialDates }: { initialDates: string[] }) 
                   {words.length > 0 && (
                     <>
                       <button
-                        onClick={handleExportAll}
+                        onClick={() => {
+                          handleExportAll();
+                          setDownloadedId('web');
+                          setTimeout(() => setDownloadedId(null), 2000);
+                        }}
                         className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg text-sm font-medium transition-colors"
                       >
-                        Export (Web)
+                        Download HTML
                       </button>
                       <button
                         onClick={handleExportWithAudio}
                         disabled={exportingAudio}
                         className="px-4 py-2 bg-purple-600 hover:bg-purple-700 disabled:bg-zinc-300 text-white rounded-lg text-sm font-medium transition-colors"
                       >
-                        {exportingAudio ? 'Generating...' : 'Export (Audio)'}
+                        {exportingAudio ? 'Generating...' : 'Download (Audio)'}
                       </button>
                     </>
+                  )}
+                  {downloadedId && (
+                    <span className="px-4 py-2 text-sm text-green-600 bg-green-50 rounded-lg">
+                      Downloaded!
+                    </span>
                   )}
                   <button
                     onClick={handleAnalyze}
@@ -281,36 +303,34 @@ export default function ClientApp({ initialDates }: { initialDates: string[] }) 
                   {savedArticles.map((article) => (
                     <div
                       key={article.id}
-                      className="bg-zinc-50 rounded-xl border border-zinc-100 overflow-hidden"
+                      className="flex items-center justify-between p-3 bg-zinc-50 rounded-xl border border-zinc-100"
                     >
-                      <div className="flex items-center justify-between p-3 border-b border-zinc-200">
+                      <div className="flex-1 min-w-0">
                         <button
                           onClick={() => handleLoadArticle(article)}
-                          className="text-sm font-medium text-blue-600 hover:text-blue-800 hover:underline truncate flex-1 text-left transition-colors"
+                          className="text-sm font-medium text-blue-600 hover:text-blue-800 hover:underline truncate block text-left transition-colors"
                           title="Click to load into text area"
                         >
                           {article.title || 'Untitled'}
                         </button>
-                        <span className="text-xs text-zinc-400 ml-3 flex-shrink-0">
+                        <p className="text-xs text-zinc-400">
                           {article.words.length} words
-                        </span>
-                        <div className="flex items-center gap-1 ml-2">
-                          <button
-                            onClick={() => handleExportArticle(article.id, article.title)}
-                            className="text-xs bg-purple-100 text-purple-700 hover:bg-purple-200 px-2 py-1 rounded-lg transition-colors"
-                          >
-                            Export
-                          </button>
-                          <button
-                            onClick={() => handleDelete(article.id)}
-                            className="text-xs text-red-400 hover:text-red-600 px-2 py-1 transition-colors"
-                          >
-                            Delete
-                          </button>
-                        </div>
+                        </p>
                       </div>
-                      <div className="p-3">
-                        <WordList words={article.words} />
+                      <div className="flex items-center gap-1 ml-3 flex-shrink-0">
+                        <button
+                          onClick={() => handleExportArticle(article.id, article.title)}
+                          disabled={exportingArticleId === article.id}
+                          className="text-xs bg-purple-100 text-purple-700 hover:bg-purple-200 disabled:opacity-50 px-2 py-1 rounded-lg transition-colors"
+                        >
+                          {exportingArticleId === article.id ? '...' : 'Export'}
+                        </button>
+                        <button
+                          onClick={() => handleDelete(article.id)}
+                          className="text-xs text-red-400 hover:text-red-600 px-2 py-1 transition-colors"
+                        >
+                          Delete
+                        </button>
                       </div>
                     </div>
                   ))}

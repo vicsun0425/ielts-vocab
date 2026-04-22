@@ -1,4 +1,9 @@
 import type { WordEntry } from '@/lib/dictionary';
+import { exec } from 'child_process';
+import { promisify } from 'util';
+import fs from 'fs';
+import path from 'path';
+import os from 'os';
 
 interface ZipWordData {
   word: string;
@@ -98,35 +103,50 @@ function escapeHtml(str: string): string {
     .replace(/'/g, '&#39;');
 }
 
+const execAsync = promisify(exec);
+
+const AUDIO_CONCURRENCY = 3;
+
+async function generateWordAudio(word: string, tmpDir: string): Promise<string | undefined> {
+  const safeName = word.replace(/[^a-zA-Z0-9_-]/g, '_');
+  const tmpFile = path.join(tmpDir, `${safeName}.m4a`);
+  try {
+    await execAsync(`say -v Daniel -o "${tmpFile}" "${word.replace(/"/g, '\\"')}"`, { timeout: 10000 });
+    const buffer = fs.readFileSync(tmpFile);
+    const dataUri = `data:audio/mp4;base64,${buffer.toString('base64')}`;
+    fs.unlinkSync(tmpFile);
+    return dataUri;
+  } catch {
+    return undefined;
+  }
+}
+
 export async function generateHtmlWithAudio(wordList: WordEntry[]): Promise<string> {
-  const { execSync } = await import('child_process');
-  const fs = await import('fs');
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'ielts-audio-'));
   const htmlWords: ZipWordData[] = [];
 
-  for (const w of wordList) {
-    const safeName = w.word.replace(/[^a-zA-Z0-9_-]/g, '_');
-    let audioData: string | undefined;
-
-    try {
-      const tmpFile = `/tmp/ielts_${safeName}.m4a`;
-      execSync(`say -v Daniel -o "${tmpFile}" "${w.word.replace(/"/g, '\\"')}"`, { timeout: 10000 });
-      const buffer = fs.readFileSync(tmpFile);
-      audioData = `data:audio/mp4;base64,${buffer.toString('base64')}`;
-      execSync(`rm "${tmpFile}"`);
-    } catch {
-      // Skip words that fail to generate audio
+  // Process words in concurrency-limited batches
+  for (let i = 0; i < wordList.length; i += AUDIO_CONCURRENCY) {
+    const batch = wordList.slice(i, i + AUDIO_CONCURRENCY);
+    const results = await Promise.all(
+      batch.map((w) => generateWordAudio(w.word, tmpDir))
+    );
+    for (let j = 0; j < batch.length; j++) {
+      const w = batch[j];
+      htmlWords.push({
+        word: w.word,
+        phoneticUk: w.phoneticUk || w.phonetic || '',
+        definition: w.definition,
+        definitionZh: (w as any).definitionZh || '',
+        example: w.example || '',
+        pos: w.pos || '',
+        audioData: results[j],
+      });
     }
-
-    htmlWords.push({
-      word: w.word,
-      phoneticUk: w.phoneticUk || w.phonetic || '',
-      definition: w.definition,
-      definitionZh: (w as any).definitionZh || '',
-      example: w.example || '',
-      pos: w.pos || '',
-      audioData,
-    });
   }
+
+  // Clean up tmp dir
+  try { fs.rmdirSync(tmpDir); } catch {}
 
   return generateVocabularyHtml(htmlWords);
 }

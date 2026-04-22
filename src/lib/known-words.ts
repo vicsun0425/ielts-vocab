@@ -5,6 +5,13 @@ export const KNOWN_WORDS = new Set([
   "i","you","he","she","it","we","they","me","him","her","us","them","my","your","his","its","our","their",
   "this","that","these","those","here","there","where","when","what","who","whom","whose","which","why","how",
   "all","each","every","both","few","many","much","some","any","no","not","only","own","same","so","than","too",
+  // Common contractions
+  "n't","isn't","aren't","wasn't","weren't","don't","doesn't","didn't","won't","wouldn't","shan't","shouldn't",
+  "can't","couldn't","mustn't","needn't","daren't","mightn't","oughtn't","haven't","hasn't","hadn't",
+  "i'm","you're","he's","she's","it's","we're","they're","i've","you've","we've","they've",
+  "i'll","you'll","he'll","she'll","it'll","we'll","they'll","i'd","you'd","he'd","she'd","we'd","they'd",
+  "that's","there's","here's","what's","who's","where's","when's","why's","how's",
+  "let's","that'll","this'll","that'd","this'd","wasn't","weren't","didn't","don't","doesn't","isn't","aren't",
   "very","just","also","really","quite","rather","pretty","even","still","already","yet","always","never","often",
   "usually","sometimes","seldom","rarely","again","once","then","now","today","tomorrow","yesterday","tonight",
   "morning","afternoon","evening","night","week","month","year","day","hour","minute","second",
@@ -33,9 +40,10 @@ export const KNOWN_WORDS = new Set([
   "prepare","pretend","produce","promise","protect","prove","realize","receive","reduce","reflect",
   "remain","remove","repair","report","require","result","return","review","risk","separate",
   "shake","shook","shaken","shape","shoot","shoulder","spread","steal","stole","stolen","strike",
-  "struck","suffer","suppose","survive","taste","throw","threw","thrown","tie","train","translate",
-  "treat","volunteer","warn","accept","achieve","admire","admit","advise","afford","agree","allow",
-  "announce","appear","argue","arrive","attempt","attend","attract","avoid","awake","base",
+  "struck","suffer","suppose","survive","taste","throw","threw","thrown","tie","train","training",
+  "translate","treat","volunteer","warn","accept","achieve","admire","admit","advise","afford",
+  "agree","allow","announce","appear","argue","arrive","attempt","attend","attract","avoid","awake",
+  "base",
 
   // Basic nouns
   "time","person","people","world","life","hand","part","child","children","eye","woman","women","man",

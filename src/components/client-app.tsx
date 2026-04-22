@@ -1,8 +1,9 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import CalendarPicker from './calendar';
 import WordList from './word-list';
+import OcrUpload from './ocr-upload';
 import type { WordEntry } from '@/lib/dictionary';
 
 export default function ClientApp({ initialDates }: { initialDates: string[] }) {
@@ -17,6 +18,7 @@ export default function ClientApp({ initialDates }: { initialDates: string[] }) 
   const [savedArticles, setSavedArticles] = useState<
     { date: string; title: string; words: WordEntry[] }[]
   >([]);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   // When date changes, load saved articles
   useEffect(() => {
@@ -25,6 +27,44 @@ export default function ClientApp({ initialDates }: { initialDates: string[] }) 
       .then((data) => setSavedArticles(data))
       .catch(() => setSavedArticles([]));
   }, [selectedDate]);
+
+  const handleOcrText = useCallback((extractedText: string) => {
+    setText((prev) => {
+      if (prev.trim()) return prev + '\n\n' + extractedText;
+      return extractedText;
+    });
+  }, []);
+
+  // Handle Ctrl+V image paste on textarea
+  const handleTextareaPaste = useCallback(
+    async (e: React.ClipboardEvent) => {
+      const items = e.clipboardData?.items;
+      if (!items) return;
+      for (const item of Array.from(items)) {
+        if (item.type.startsWith('image/')) {
+          e.preventDefault();
+          const blob = item.getAsFile();
+          if (!blob) return;
+          // Import tesseract dynamically to avoid SSR issues
+          const { createWorker } = await import('tesseract.js');
+          const worker = await createWorker('eng', 1, {
+            logger: (m) => {
+              if (m.status) console.log(`OCR: ${m.status}`);
+            },
+          });
+          const { data } = await worker.recognize(blob);
+          await worker.terminate();
+          if (data.text.trim()) {
+            setText((prev) =>
+              prev.trim() ? prev + '\n\n' + data.text.trim() : data.text.trim()
+            );
+          }
+          return;
+        }
+      }
+    },
+    []
+  );
 
   const handleAnalyze = useCallback(async () => {
     if (!text.trim()) return;
@@ -84,7 +124,7 @@ export default function ClientApp({ initialDates }: { initialDates: string[] }) 
             IELTS Vocabulary Tool
           </h1>
           <p className="text-zinc-500 mt-1">
-            Paste an article below, and get new words with phonetics, definitions, and audio.
+            Paste text or upload a screenshot — extract new words with phonetics, definitions, and audio.
           </p>
         </header>
 
@@ -93,16 +133,27 @@ export default function ClientApp({ initialDates }: { initialDates: string[] }) 
           <div className="lg:col-span-2 space-y-6">
             {/* Input area */}
             <div className="bg-white rounded-2xl border border-zinc-200 shadow-sm p-5">
-              <label className="block text-sm font-medium text-zinc-700 mb-2">
-                Paste your English article here
-              </label>
+              {/* OCR upload */}
+              <div className="mb-4">
+                <OcrUpload onTextExtracted={handleOcrText} />
+              </div>
+
+              {/* Divider */}
+              <div className="flex items-center gap-3 mb-3">
+                <div className="flex-1 h-px bg-zinc-200" />
+                <span className="text-xs text-zinc-400">or paste text</span>
+                <div className="flex-1 h-px bg-zinc-200" />
+              </div>
+
               <textarea
+                ref={textareaRef}
                 className="w-full h-64 p-4 border border-zinc-200 rounded-xl text-zinc-800 text-sm
                   placeholder:text-zinc-400 resize-none focus:outline-none focus:ring-2 focus:ring-blue-500
                   focus:border-transparent font-normal leading-relaxed"
                 placeholder="Paste any English article or passage here..."
                 value={text}
                 onChange={(e) => setText(e.target.value)}
+                onPaste={handleTextareaPaste}
               />
               <div className="flex items-center justify-between mt-3">
                 <span className="text-xs text-zinc-400">
@@ -111,6 +162,14 @@ export default function ClientApp({ initialDates }: { initialDates: string[] }) 
                     : 'Enter text to analyze'}
                 </span>
                 <div className="flex gap-2">
+                  {text.trim().length > 0 && (
+                    <button
+                      onClick={() => setText('')}
+                      className="px-3 py-2 text-zinc-500 hover:text-zinc-700 text-sm transition-colors"
+                    >
+                      Clear
+                    </button>
+                  )}
                   {words.length > 0 && !saved && (
                     <button
                       onClick={handleSave}
@@ -183,7 +242,7 @@ export default function ClientApp({ initialDates }: { initialDates: string[] }) 
 
             {!loading && words.length === 0 && text.length > 0 && (
               <div className="text-center py-12 text-zinc-400">
-                Click "Analyze" to find new words
+                Click &quot;Analyze&quot; to find new words
               </div>
             )}
           </div>
@@ -201,7 +260,8 @@ export default function ClientApp({ initialDates }: { initialDates: string[] }) 
                 How it works
               </h3>
               <ol className="text-xs text-zinc-500 space-y-1.5 list-decimal list-inside">
-                <li>Paste an English article</li>
+                <li>Upload a screenshot or paste text</li>
+                <li>OCR extracts text from images automatically</li>
                 <li>Click &ldquo;Analyze&rdquo;</li>
                 <li>See new words beyond middle school level</li>
                 <li>Click the speaker icon to hear British pronunciation</li>

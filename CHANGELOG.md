@@ -1,5 +1,23 @@
 # Changelog
 
+## [0.4.0] - 2026-04-22
+
+### Saved Exports with Download Links
+- Exports are automatically saved to the server's `/exports` directory
+- Saved exports list displayed on the main page
+- Each saved export has a direct Download button for re-downloading
+- No need to regenerate — just download from the saved list
+
+## [0.3.0] - 2026-04-22
+
+### Chinese Translations & Improved Exports
+- Chinese translations for each word definition via MyMemory API
+- Two export modes: Web (lightweight) and Audio (offline with embedded audio)
+- Export button always visible when words are available
+- Historical article export buttons
+- Export API endpoint at `/api/export`
+- Chinese README with full documentation
+
 ## [0.2.0] - 2026-04-22
 
 ### OCR Screenshot Support

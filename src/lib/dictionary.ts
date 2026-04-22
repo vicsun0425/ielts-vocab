@@ -5,8 +5,9 @@ export interface WordEntry {
   phonetic: string;
   phoneticUk: string;
   definition: string;
+  definitionZh: string; // Chinese translation
   example: string;
-  pos: string; // part of speech
+  pos: string;
 }
 
 function isKnownWord(word: string): boolean {
@@ -26,6 +27,17 @@ export function extractNewWords(text: string): string[] {
   newWords.sort((a, b) => (order[a] ?? 0) - (order[b] ?? 0));
 
   return newWords.slice(0, 50);
+}
+
+async function translateToChinese(text: string): Promise<string> {
+  try {
+    const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=en|zh-CN`;
+    const res = await fetch(url);
+    const data = await res.json();
+    return data?.responseData?.translatedText || '';
+  } catch {
+    return '';
+  }
 }
 
 export async function lookupWord(word: string): Promise<WordEntry | null> {
@@ -66,11 +78,15 @@ export async function lookupWord(word: string): Promise<WordEntry | null> {
 
     if (!definition) return null;
 
+    // Translate definition to Chinese
+    const definitionZh = await translateToChinese(definition);
+
     return {
       word: entry.word,
       phonetic,
       phoneticUk,
       definition,
+      definitionZh,
       example,
       pos,
     };
@@ -81,7 +97,7 @@ export async function lookupWord(word: string): Promise<WordEntry | null> {
 
 export async function lookupWords(words: string[]): Promise<WordEntry[]> {
   const results: WordEntry[] = [];
-  const batchSize = 5;
+  const batchSize = 3; // smaller batch to avoid rate limiting
 
   for (let i = 0; i < words.length; i += batchSize) {
     const batch = words.slice(i, i + batchSize);

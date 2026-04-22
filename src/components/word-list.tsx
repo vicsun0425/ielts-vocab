@@ -3,12 +3,20 @@
 import { useState } from 'react';
 import type { WordEntry } from '@/lib/dictionary';
 
-export default function WordList({ words }: { words: WordEntry[] }) {
+export default function WordList({ words, onExport }: { words: WordEntry[]; onExport?: () => void }) {
   return (
     <div className="space-y-3">
       {words.map((entry, idx) => (
         <WordCard key={`${entry.word}-${idx}`} entry={entry} index={idx} />
       ))}
+      {onExport && (
+        <button
+          onClick={onExport}
+          className="w-full py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg text-sm font-medium transition-colors"
+        >
+          Export this article as HTML
+        </button>
+      )}
     </div>
   );
 }
@@ -19,7 +27,6 @@ function WordCard({ entry, index }: { entry: WordEntry; index: number }) {
   const playAudio = () => {
     setPlaying(true);
     const utterance = new SpeechSynthesisUtterance(entry.word);
-    // Try to find a British voice
     const voices = speechSynthesis.getVoices();
     const ukVoice = voices.find((v) =>
       v.lang.startsWith('en-GB') || v.lang.startsWith('en-UK')
@@ -34,7 +41,6 @@ function WordCard({ entry, index }: { entry: WordEntry; index: number }) {
     speechSynthesis.speak(utterance);
   };
 
-  // Preload voices
   if (typeof window !== 'undefined' && speechSynthesis.getVoices().length === 0) {
     speechSynthesis.onvoiceschanged = () => speechSynthesis.getVoices();
   }
@@ -87,6 +93,11 @@ function WordCard({ entry, index }: { entry: WordEntry; index: number }) {
           <p className="mt-2 text-sm text-zinc-700 leading-relaxed">
             {entry.definition}
           </p>
+          {entry.definitionZh && (
+            <p className="mt-1 text-sm text-blue-700 leading-relaxed">
+              {entry.definitionZh}
+            </p>
+          )}
           {entry.example && (
             <p className="mt-2 text-sm text-zinc-500 italic border-l-2 border-zinc-200 pl-3">
               "{entry.example}"

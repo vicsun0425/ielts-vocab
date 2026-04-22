@@ -16,11 +16,11 @@ export default function ClientApp({ initialDates }: { initialDates: string[] }) 
     new Date().toISOString().split('T')[0]
   );
   const [savedArticles, setSavedArticles] = useState<
-    { date: string; title: string; words: WordEntry[] }[]
+    { date: string; title: string; id: number; words: WordEntry[] }[]
   >([]);
+  const [exportingAudio, setExportingAudio] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-  // When date changes, load saved articles
   useEffect(() => {
     fetch(`/api/articles?date=${selectedDate}`)
       .then((r) => r.json())
@@ -35,7 +35,6 @@ export default function ClientApp({ initialDates }: { initialDates: string[] }) 
     });
   }, []);
 
-  // Handle Ctrl+V image paste on textarea
   const handleTextareaPaste = useCallback(
     async (e: React.ClipboardEvent) => {
       const items = e.clipboardData?.items;
@@ -45,7 +44,6 @@ export default function ClientApp({ initialDates }: { initialDates: string[] }) 
           e.preventDefault();
           const blob = item.getAsFile();
           if (!blob) return;
-          // Import tesseract dynamically to avoid SSR issues
           const { createWorker } = await import('tesseract.js');
           const worker = await createWorker('eng', 1, {
             logger: (m) => {
@@ -108,10 +106,49 @@ export default function ClientApp({ initialDates }: { initialDates: string[] }) 
     }
   }, [text, words, selectedDate]);
 
+  const handleExportAll = useCallback(() => {
+    window.location.href = '/api/articles?export=html';
+  }, []);
+
+  const handleExportWithAudio = useCallback(async () => {
+    if (!words.length) return;
+    setExportingAudio(true);
+    try {
+      const res = await fetch('/api/export', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ words }),
+      });
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'ielts-vocabulary.html';
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch {
+      // export failed
+    } finally {
+      setExportingAudio(false);
+    }
+  }, [words]);
+
+  const handleExportArticle = useCallback(async (id: number, title: string) => {
+    const res = await fetch(`/api/articles?export=html&audio=true&id=${id}`);
+    if (!res.ok) return;
+    const blob = await res.blob();
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${(title || 'vocabulary').replace(/[^a-zA-Z0-9_一-鿿]/g, '_')}.html`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }, []);
+
   const handleDelete = useCallback(
     async (id: number) => {
       await fetch(`/api/articles?id=${id}`, { method: 'DELETE' });
-      setSavedArticles((prev) => prev.filter((a) => (a as any).id !== id));
+      setSavedArticles((prev) => prev.filter((a) => a.id !== id));
     },
     [setSavedArticles]
   );
@@ -133,13 +170,9 @@ export default function ClientApp({ initialDates }: { initialDates: string[] }) 
           <div className="lg:col-span-2 space-y-6">
             {/* Input area */}
             <div className="bg-white rounded-2xl border border-zinc-200 shadow-sm p-5">
-              {/* OCR upload */}
-              <div className="mb-4">
-                <OcrUpload onTextExtracted={handleOcrText} />
-              </div>
+              <OcrUpload onTextExtracted={handleOcrText} />
 
-              {/* Divider */}
-              <div className="flex items-center gap-3 mb-3">
+              <div className="flex items-center gap-3 my-3">
                 <div className="flex-1 h-px bg-zinc-200" />
                 <span className="text-xs text-zinc-400">or paste text</span>
                 <div className="flex-1 h-px bg-zinc-200" />
@@ -161,7 +194,7 @@ export default function ClientApp({ initialDates }: { initialDates: string[] }) 
                     ? `${text.trim().split(/\s+/).length} words`
                     : 'Enter text to analyze'}
                 </span>
-                <div className="flex gap-2">
+                <div className="flex gap-2 flex-wrap">
                   {text.trim().length > 0 && (
                     <button
                       onClick={() => setText('')}
@@ -178,18 +211,27 @@ export default function ClientApp({ initialDates }: { initialDates: string[] }) 
                       Save
                     </button>
                   )}
-                  {words.length > 0 && (
-                    <button
-                      onClick={() => (window.location.href = '/api/articles?export=html')}
-                      className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg text-sm font-medium transition-colors"
-                    >
-                      Export
-                    </button>
-                  )}
                   {saved && (
                     <span className="px-4 py-2 text-sm text-green-600 bg-green-50 rounded-lg">
                       Saved!
                     </span>
+                  )}
+                  {words.length > 0 && (
+                    <>
+                      <button
+                        onClick={handleExportAll}
+                        className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg text-sm font-medium transition-colors"
+                      >
+                        Export (Web)
+                      </button>
+                      <button
+                        onClick={handleExportWithAudio}
+                        disabled={exportingAudio}
+                        className="px-4 py-2 bg-purple-600 hover:bg-purple-700 disabled:bg-zinc-300 text-white rounded-lg text-sm font-medium transition-colors"
+                      >
+                        {exportingAudio ? 'Generating...' : 'Export (Audio)'}
+                      </button>
+                    </>
                   )}
                   <button
                     onClick={handleAnalyze}
@@ -210,21 +252,29 @@ export default function ClientApp({ initialDates }: { initialDates: string[] }) 
                   Saved articles on {selectedDate}
                 </h3>
                 <div className="space-y-3">
-                  {savedArticles.map((article, idx) => (
+                  {savedArticles.map((article) => (
                     <div
-                      key={idx}
+                      key={article.id}
                       className="p-4 bg-zinc-50 rounded-xl border border-zinc-100"
                     >
                       <div className="flex items-center justify-between mb-2">
                         <span className="text-sm font-medium text-zinc-800 truncate flex-1">
-                          {(article as any).title || 'Untitled'}
+                          {article.title || 'Untitled'}
                         </span>
-                        <button
-                          onClick={() => handleDelete((article as any).id)}
-                          className="text-xs text-red-400 hover:text-red-600 ml-2"
-                        >
-                          Delete
-                        </button>
+                        <div className="flex items-center gap-1">
+                          <button
+                            onClick={() => handleExportArticle(article.id, article.title)}
+                            className="text-xs bg-purple-100 text-purple-700 hover:bg-purple-200 px-2 py-1 rounded-lg transition-colors"
+                          >
+                            Export
+                          </button>
+                          <button
+                            onClick={() => handleDelete(article.id)}
+                            className="text-xs text-red-400 hover:text-red-600 px-2 py-1 transition-colors"
+                          >
+                            Delete
+                          </button>
+                        </div>
                       </div>
                       <WordList words={article.words} />
                     </div>
@@ -274,6 +324,7 @@ export default function ClientApp({ initialDates }: { initialDates: string[] }) 
                 <li>See new words beyond middle school level</li>
                 <li>Click the speaker icon to hear British pronunciation</li>
                 <li>Save articles to review by date</li>
+                <li>Export as HTML (with or without embedded audio)</li>
               </ol>
             </div>
           </div>

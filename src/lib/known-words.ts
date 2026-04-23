@@ -1,6 +1,6 @@
 // Common words that a middle school student (初中) should know
 // Words NOT in this list will be treated as "new words"
-// 3295 unique words (auto-deduplicated)
+// 3291 unique words (auto-deduplicated)
 export const KNOWN_WORDS = new Set([
   "ability","able","aboard","about","above","abroad","absence","absent","absorb","abstract","abuse","academic","accelerate","accent","accept",
   "access","accident","accommodation","accompany","accomplish","account","accountant","accumulate","accuracy","accurate","accuse","ache","achieve","acknowledge","acquaintance",
@@ -78,7 +78,7 @@ export const KNOWN_WORDS = new Set([
   "forth","fortune","forty","forward","foster","foul","found","fountain","four","fourteen","fourth","fox","fragile","frame","france",
   "free","freedom","freeze","french","frequently","fresh","friction","friday","fridge","friend","friendly","friendship","frighten","frightened","frog",
   "from","front","frost","frown","fruit","fry","fuel","full","fully","fun","function","funeral","funny","fur","furnished",
-  "furniture","further","furthermore","future","gain","galaxy","gallery","gallon","game","gang","gap","garage","garbage","garden","garlic","gas",
+  "furniture","further","future","gain","galaxy","gallery","gallon","game","gang","gap","garage","garbage","garden","garlic","gas",
   "gate","gather","gave","gear","general","generally","generation","generous","gentle","gentleman","geography","german","germany","gesture","get",
   "ghost","giant","gift","giraffe","girl","give","given","glad","glass","global","glove","glue","go","goal","goat",
   "god","gold","golden","golf","gone","good","goodbye","goods","goose","gossip","got","government","grab","grade","gradually",
@@ -88,7 +88,7 @@ export const KNOWN_WORDS = new Set([
   "half","hall","ham","hamburger","hammer","hand","handbag","handful","handkerchief","handle","handsome","handwriting","hang","happen","happily",
   "happiness","happy","harbor","hard","hardly","harm","harvest","has","hasn't","hat","hate","have","haven't","he","he'd",
   "he'll","he's","head","headache","headline","headmaster","headquarters","heal","health","healthy","heap","hear","heard","heart","heat",
-  "heaven","heavy","heel","height","held","helicopter","hello","helmet","help","helpful","hen","hence","her","herb","here","here's",
+  "heaven","heavy","heel","height","held","helicopter","hello","helmet","help","helpful","hen","her","herb","here","here's",
   "hero","hers","herself","hey","hi","hide","high","highly","highway","hike","hill","him","himself","hip","hire",
   "his","history","hit","hobby","hold","hole","holiday","hollow","home","homeland","hometown","homework","honest","honey","honor",
   "hook","hope","hopeful","horrible","horse","hospital","host","hostess","hot","hotel","hour","house","housewife","housework","how",
@@ -121,7 +121,7 @@ export const KNOWN_WORDS = new Set([
   "muddy","mug","murder","muscle","museum","music","musical","musician","must","mustn't","mutual","my","myself","mystery","n't",
   "nail","name","narrow","nasty","nation","national","native","natural","nature","navy","near","nearby","nearly","neat","necessary",
   "neck","necklace","need","needle","needn't","negative","neglect","neighbor","neighborhood","neither","nephew","nerve","nervous","nest","net",
-  "network","neutral","never","nevertheless","new","new words","news","newspaper","next","nice","nicely","niece","night","nine","nineteen","ninety",
+  "network","neutral","never","new","new words","news","newspaper","next","nice","nicely","niece","night","nine","nineteen","ninety",
   "ninth","no","noble","nobody","nod","noise","noisy","none","noodle","noon","nor","normal","normally","north","northeast",
   "northern","northwest","nose","not","note","notebook","nothing","notice","novel","november","now","nowadays","nowhere","nuclear","number",
   "nurse","nut","nylon","o'clock","oak","oar","obey","object","observe","obtain","obvious","obviously","occasion","ocean","oceania",
@@ -214,7 +214,7 @@ export const KNOWN_WORDS = new Set([
   "water","watermelon","wave","wax","way","we","we'd","we'll","we're","we've","weak","wealth","weapon","wear","weather",
   "weave","web","wedding","wednesday","weed","week","weekday","weekend","weep","weigh","weight","weird","welcome","welfare","well",
   "went","were","weren't","west","western","wet","whale","what","what's","whatever","wheat","wheel","when","when's","whenever",
-  "where","where's","whereas","wherever","whether","which","whichever","while","whip","whisper","whistle","white","who","who's","whoever","whole",
+  "where","where's","wherever","whether","which","whichever","while","whip","whisper","whistle","white","who","who's","whoever","whole",
   "whom","whose","why","why's","wicked","wide","widely","widespread","widow","width","wife","wild","will","willing","win",
   "wind","window","wine","wing","winner","winter","wipe","wire","wisdom","wise","wish","wit","with","withdraw","within",
   "without","witness","wolf","woman","women","won","won't","wonder","wonderful","wood","wool","woolen","word","wore","work",

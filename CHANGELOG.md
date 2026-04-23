@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.4.3] - 2026-04-23
+
+### Fix Page Load Memory Crash
+- Changed `ocr-upload.tsx` from static `import { createWorker } from 'tesseract.js'` to dynamic `await import('tesseract.js')`
+- Tesseract.js (WASM engine + language models) is now only loaded when the user actually uploads an image, not on every page load
+
 ## [0.4.2] - 2026-04-22
 
 ### Fix Dev Server Freeze

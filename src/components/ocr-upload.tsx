@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useCallback, useRef } from 'react';
-import { createWorker } from 'tesseract.js';
 
 export default function OcrUpload({
   onTextExtracted,
@@ -23,6 +22,7 @@ export default function OcrUpload({
     reader.onload = (e) => setPreview(e.target?.result as string);
     reader.readAsDataURL(file);
 
+    const { createWorker } = await import('tesseract.js');
     const worker = await createWorker('eng', 1, {
       logger: (m) => {
         if (m.progress) setProgress(Math.round(m.progress * 100));

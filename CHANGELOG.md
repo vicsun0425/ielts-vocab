@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.5.1] - 2026-04-24
+
+### Export Logic Cleanup
+- Fixed "Download HTML" button: now exports current words (not all DB articles), with Chinese definitions
+- Renamed "Download HTML" → "Download (Web)" for clarity — lightweight HTML, no audio
+- "Download (Audio)" — HTML with embedded base64 audio, works offline
+- Both buttons now go through `/api/export` API, consistent behavior
+- Removed redundant "Saved exports" section — exports auto-download, no need to track history
+- Saved articles now have both "Web" and "Audio" export buttons (previously only audio)
+- Reduced state: removed `savedExports`, `downloadedId`, `exportingHtml` — consolidated to `exportingArticleId` + `exportArticleFormat`
+
 ## [0.5.0] - 2026-04-23
 
 ### HTML Export with Embedded Audio

@@ -83,7 +83,7 @@ export function extractNewWords(text: string): string[] {
 
   // Filter: skip if the word itself, its lemma, or its base form is known
   const newWords = uniqueWords.filter(w => {
-    if (!w || w.length === 0) return false;
+    if (!w || w.length < 2) return false;
     // Direct match
     if (isKnownWord(w)) return false;
     // Lemma match

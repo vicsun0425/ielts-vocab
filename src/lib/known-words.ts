@@ -1,6 +1,6 @@
 // Common words that a middle school student (初中) should know
 // Words NOT in this list will be treated as "new words"
-// 3290 unique words (auto-deduplicated)
+// 3291 unique words (auto-deduplicated)
 export const KNOWN_WORDS = new Set([
   "ability","able","aboard","about","above","abroad","absence","absent","absorb","abstract","abuse","academic","accelerate","accent","accept",
   "access","accident","accommodation","accompany","accomplish","account","accountant","accumulate","accuracy","accurate","accuse","ache","achieve","acknowledge","acquaintance",
@@ -10,7 +10,7 @@ export const KNOWN_WORDS = new Set([
   "again","against","age","agency","agenda","agent","aggressive","ago","agony","agree","agreeable","agreement","agriculture","ahead","aid",
   "air","aircraft","airline","airport","aisle","alarm","album","alcohol","alert","alien","alike","alive","all","allergy","alliance",
   "allocate","allow","allowance","ally","almost","alone","along","alongside","aloud","alphabet","already","also","although","altogether","aluminum",
-  "always","am","amateur","amazed","amazing","ambiguous","ambition","ambulance","amendment","america","american","amid","ammunition","among","amount",
+  "always","am","an","amateur","amazed","amazing","ambiguous","ambition","ambulance","amendment","america","american","amid","ammunition","among","amount",
   "ample","amuse","analogy","analyze","ancestor","anchor","ancient","and","angel","anger","angle","angry","anguish","animal","animate",
   "animation","ankle","anniversary","announce","annoy","annoyance","annual","another","answer","ant","anxiety","anxious","any","apart","apartment",
   "apologize","apparent","appeal","appear","appendix","appetite","applaud","applause","apple","appliance","applicant","appointment","appreciate","appreciation","approach",

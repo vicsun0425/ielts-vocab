@@ -9,6 +9,11 @@
 - Audio is embedded directly in the PDF — works offline, no network needed
 - Falls back gracefully on non-macOS platforms (returns error message)
 
+### PDF Export Fixes
+- Card-based layout: 3+ words per page with reasonable spacing instead of one word per page
+- CJK font embedding: Chinese definitions now display correctly using Hiragino Sans GB
+- Audio file annotations properly linked to speaker icons for each word card
+
 ### KNOWN_WORDS Cleanup
 - Deduplicated known words list: 4404 entries → 3290 unique words
 - Added `scripts/clean-known-words.py` for future cleanup runs

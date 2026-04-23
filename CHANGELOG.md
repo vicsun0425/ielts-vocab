@@ -2,17 +2,11 @@
 
 ## [0.5.0] - 2026-04-23
 
-### PDF Export with Embedded Audio
-- New "Download PDF" button generates a PDF with word cards and embedded audio attachments
-- Each word has a speaker icon that links to an embedded .m4a pronunciation file
-- Uses PyMuPDF (Python) for PDF generation + macOS `say` command for TTS
-- Audio is embedded directly in the PDF — works offline, no network needed
-- Falls back gracefully on non-macOS platforms (returns error message)
-
-### PDF Export Fixes
-- Card-based layout: 3+ words per page with reasonable spacing instead of one word per page
-- CJK font embedding: Chinese definitions now display correctly using Hiragino Sans GB
-- Audio file annotations properly linked to speaker icons for each word card
+### HTML Export with Embedded Audio
+- "Download (Audio)" generates a self-contained HTML file with embedded base64 audio
+- Click the speaker button to play British pronunciation — works offline in any browser
+- Chinese definitions displayed for each word via MyMemory API translation
+- Audio generation processes words in batches of 3 to prevent memory spikes
 
 ### KNOWN_WORDS Cleanup
 - Deduplicated known words list: 4404 entries → 3290 unique words

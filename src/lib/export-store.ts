@@ -13,20 +13,14 @@ export interface ExportRecord {
   title: string;
   wordCount: number;
   withAudio: boolean;
-  format: 'html' | 'pdf';
   createdAt: string;
 }
 
-const SUPPORTED_EXTS = ['.html', '.pdf'];
+const SUPPORTED_EXTS = ['.html'];
 
 function getMetaPath(filename: string): string {
-  const base = SUPPORTED_EXTS.reduce((f, ext) => f.replace(new RegExp(ext.replace('.', '\\.') + '$'), ''), filename);
+  const base = filename.replace(/\.html$/, '');
   return path.join(EXPORTS_DIR, `${base}.meta.json`);
-}
-
-function getExt(filename: string): 'html' | 'pdf' {
-  if (filename.endsWith('.pdf')) return 'pdf';
-  return 'html';
 }
 
 export function listExports(): ExportRecord[] {
@@ -48,10 +42,9 @@ export function listExports(): ExportRecord[] {
         return {
           id: file,
           filename: file,
-          title: meta.title || file.replace(/\.(html|pdf)$/, ''),
+          title: meta.title || file.replace(/\.html$/, ''),
           wordCount: meta.wordCount || 0,
           withAudio: meta.withAudio ?? false,
-          format: getExt(file),
           createdAt: stat.birthtime.toISOString(),
         };
       });
@@ -68,7 +61,7 @@ export function saveExport(
   const safeFilename = filename.replace(/[^a-zA-Z0-9_\-.]/g, '_');
   const filepath = path.join(EXPORTS_DIR, safeFilename);
   writeFileSync(filepath, content);
-  const base = safeFilename.replace(/\.(html|pdf)$/, '');
+  const base = safeFilename.replace(/\.html$/, '');
   writeFileSync(
     path.join(EXPORTS_DIR, `${base}.meta.json`),
     JSON.stringify(meta, null, 2)

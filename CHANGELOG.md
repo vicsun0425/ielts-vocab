@@ -12,6 +12,11 @@
 - Deduplicated known words list: 4404 entries → 3290 unique words
 - Added `scripts/clean-known-words.py` for future cleanup runs
 
+### Word Filtering Fix
+- Filter out single-letter words (A, B, C, D, E option letters in IELTS listening)
+- Add "an" to known words (was missing from original list)
+- KNOWN_WORDS kept at ~3290 — conservative list to maximize new word discovery for middle school students
+
 ### Dictionary Lookup Caching
 - All Dictionary API + MyMemory API results are now cached to `src/data/dictionary-cache.json`
 - Re-analyzing the same text is now instant (< 50ms vs ~13s)

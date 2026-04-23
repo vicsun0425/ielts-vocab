@@ -1,6 +1,28 @@
 # Changelog
 
-## [0.4.3] - 2026-04-23
+## [0.5.0] - 2026-04-23
+
+### PDF Export with Embedded Audio
+- New "Download PDF" button generates a PDF with word cards and embedded audio attachments
+- Each word has a speaker icon that links to an embedded .m4a pronunciation file
+- Uses PyMuPDF (Python) for PDF generation + macOS `say` command for TTS
+- Audio is embedded directly in the PDF — works offline, no network needed
+- Falls back gracefully on non-macOS platforms (returns error message)
+
+### KNOWN_WORDS Cleanup
+- Deduplicated known words list: 4404 entries → 3290 unique words
+- Added `scripts/clean-known-words.py` for future cleanup runs
+
+### Dictionary Lookup Caching
+- All Dictionary API + MyMemory API results are now cached to `src/data/dictionary-cache.json`
+- Re-analyzing the same text is now instant (< 50ms vs ~13s)
+- Cache persists across server restarts
+- Atomic writes prevent corruption from concurrent requests
+
+### Lemma-based Word Filtering
+- Words like "went", "children", "better" are now correctly filtered as inflected forms of known words
+- Uses `src/lib/lemma-map.json` for irregular forms (~150 word families)
+- Rule-based fallback handles regular suffixes (-s, -ed, -ing, -ies)
 
 ### Fix Page Load Memory Crash
 - Changed `ocr-upload.tsx` from static `import { createWorker } from 'tesseract.js'` to dynamic `await import('tesseract.js')`

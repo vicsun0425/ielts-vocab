@@ -19,6 +19,7 @@ export default function ClientApp({ initialDates }: { initialDates: string[] }) 
     { date: string; title: string; id: number; content: string; words: WordEntry[] }[]
   >([]);
   const [exportingAudio, setExportingAudio] = useState(false);
+  const [exportingPdf, setExportingPdf] = useState(false);
   const [exportingArticleId, setExportingArticleId] = useState<number | null>(null);
   const [downloadedId, setDownloadedId] = useState<string | null>(null);
   const [savedExports, setSavedExports] = useState<
@@ -159,6 +160,40 @@ export default function ClientApp({ initialDates }: { initialDates: string[] }) 
     }
   }, [words, text]);
 
+  const handleExportPdf = useCallback(async () => {
+    if (!words.length) return;
+    setExportingPdf(true);
+    try {
+      const title = text.slice(0, 50).trim() || `vocabulary-${Date.now()}`;
+      const res = await fetch('/api/export', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ words, title, withAudio: true, format: 'pdf' }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        alert(data.error || 'PDF export failed');
+        return;
+      }
+      const dlRes = await fetch(`/api/export?download=true&id=${encodeURIComponent(data.id)}`);
+      const blob = await dlRes.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = data.id;
+      a.click();
+      URL.revokeObjectURL(url);
+      setSavedExports((prev) => [
+        { id: data.id, title, wordCount: data.wordCount, withAudio: true, createdAt: new Date().toISOString() },
+        ...prev,
+      ]);
+    } catch {
+      alert('PDF export failed');
+    } finally {
+      setExportingPdf(false);
+    }
+  }, [words, text]);
+
   const handleExportArticle = useCallback(async (id: number, title: string) => {
     if (exportingArticleId !== null) return;
     setExportingArticleId(id);
@@ -273,6 +308,13 @@ export default function ClientApp({ initialDates }: { initialDates: string[] }) 
                         className="px-4 py-2 bg-purple-600 hover:bg-purple-700 disabled:bg-zinc-300 text-white rounded-lg text-sm font-medium transition-colors"
                       >
                         {exportingAudio ? 'Generating...' : 'Download (Audio)'}
+                      </button>
+                      <button
+                        onClick={handleExportPdf}
+                        disabled={exportingPdf}
+                        className="px-4 py-2 bg-amber-600 hover:bg-amber-700 disabled:bg-zinc-300 text-white rounded-lg text-sm font-medium transition-colors"
+                      >
+                        {exportingPdf ? 'Generating...' : 'Download PDF'}
                       </button>
                     </>
                   )}

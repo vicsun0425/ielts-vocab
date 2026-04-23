@@ -1,4 +1,4 @@
-import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'fs';
+import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync, unlinkSync, statSync } from 'fs';
 import path from 'path';
 
 const EXPORTS_DIR = path.join(process.cwd(), 'exports');
@@ -13,17 +13,29 @@ export interface ExportRecord {
   title: string;
   wordCount: number;
   withAudio: boolean;
+  format: 'html' | 'pdf';
   createdAt: string;
+}
+
+const SUPPORTED_EXTS = ['.html', '.pdf'];
+
+function getMetaPath(filename: string): string {
+  const base = SUPPORTED_EXTS.reduce((f, ext) => f.replace(new RegExp(ext.replace('.', '\\.') + '$'), ''), filename);
+  return path.join(EXPORTS_DIR, `${base}.meta.json`);
+}
+
+function getExt(filename: string): 'html' | 'pdf' {
+  if (filename.endsWith('.pdf')) return 'pdf';
+  return 'html';
 }
 
 export function listExports(): ExportRecord[] {
   try {
-    const { statSync } = require('fs');
     const files = readdirSync(EXPORTS_DIR).sort().reverse();
     return files
-      .filter((f) => f.endsWith('.html'))
+      .filter((f) => SUPPORTED_EXTS.some(ext => f.endsWith(ext)) && !f.endsWith('.meta.json'))
       .map((file) => {
-        const metaPath = path.join(EXPORTS_DIR, file.replace('.html', '.meta.json'));
+        const metaPath = getMetaPath(file);
         let meta: Partial<ExportRecord> = {};
         try {
           if (existsSync(metaPath)) {
@@ -36,9 +48,10 @@ export function listExports(): ExportRecord[] {
         return {
           id: file,
           filename: file,
-          title: meta.title || file.replace('.html', ''),
+          title: meta.title || file.replace(/\.(html|pdf)$/, ''),
           wordCount: meta.wordCount || 0,
           withAudio: meta.withAudio ?? false,
+          format: getExt(file),
           createdAt: stat.birthtime.toISOString(),
         };
       });
@@ -49,14 +62,15 @@ export function listExports(): ExportRecord[] {
 
 export function saveExport(
   filename: string,
-  html: string,
+  content: string | Buffer,
   meta: { title: string; wordCount: number; withAudio: boolean }
 ): string {
   const safeFilename = filename.replace(/[^a-zA-Z0-9_\-.]/g, '_');
   const filepath = path.join(EXPORTS_DIR, safeFilename);
-  writeFileSync(filepath, html);
+  writeFileSync(filepath, content);
+  const base = safeFilename.replace(/\.(html|pdf)$/, '');
   writeFileSync(
-    path.join(EXPORTS_DIR, safeFilename.replace('.html', '.meta.json')),
+    path.join(EXPORTS_DIR, `${base}.meta.json`),
     JSON.stringify(meta, null, 2)
   );
   return safeFilename;
@@ -77,12 +91,12 @@ export function deleteExport(filename: string): boolean {
   try {
     const safeFilename = path.basename(filename);
     const filepath = path.join(EXPORTS_DIR, safeFilename);
-    const metaPath = filepath.replace('.html', '.meta.json');
+    const metaPath = getMetaPath(safeFilename);
     if (existsSync(filepath)) {
-      require('fs').unlinkSync(filepath);
+      unlinkSync(filepath);
     }
     if (existsSync(metaPath)) {
-      require('fs').unlinkSync(metaPath);
+      unlinkSync(metaPath);
     }
     return true;
   } catch {
@@ -95,15 +109,14 @@ export function deleteExportsByTitle(title: string): boolean {
     const files = readdirSync(EXPORTS_DIR);
     let deleted = false;
     for (const file of files) {
-      if (!file.endsWith('.html')) continue;
-      const metaPath = path.join(EXPORTS_DIR, file.replace('.html', '.meta.json'));
+      if (!SUPPORTED_EXTS.some(ext => file.endsWith(ext))) continue;
+      const metaPath = getMetaPath(file);
       try {
         if (existsSync(metaPath)) {
           const meta = JSON.parse(readFileSync(metaPath, 'utf-8'));
           if (meta.title === title) {
-            const filepath = path.join(EXPORTS_DIR, file);
-            require('fs').unlinkSync(filepath);
-            require('fs').unlinkSync(metaPath);
+            unlinkSync(path.join(EXPORTS_DIR, file));
+            unlinkSync(metaPath);
             deleted = true;
           }
         }

@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.5.2] - 2026-04-24
+
+### All Exports Now Include Audio
+- Merged "Download (Web)" and "Download (Audio)" into a single "Download" button
+- Every exported HTML file now includes embedded base64 audio — works offline in any browser
+- Saved article "Export" button also generates audio-embedded HTML (previously audio only)
+- Simplified state: removed `exportArticleFormat`, now just `exportingArticleId` tracks loading
+
 ## [0.5.1] - 2026-04-24
 
 ### Export Logic Cleanup

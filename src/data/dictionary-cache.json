@@ -1,1 +1,419 @@
-{"version":1,"entries":{}}
+{
+  "version": 1,
+  "entries": {
+    "design": {
+      "phonetic": "/dɪˈzaɪn/",
+      "phoneticUk": "/dɪˈzaɪn/",
+      "definition": "Intention or plot.",
+      "definitionZh": "意图或情节。",
+      "example": "To be hateful of the truth by design.",
+      "pos": "noun",
+      "cachedAt": 1776991422783
+    },
+    "fashion": {
+      "phonetic": "/ˈfæʃən/",
+      "phoneticUk": "/ˈfæʃən/",
+      "definition": "Popular trends.",
+      "definitionZh": "热门趋势。",
+      "example": "Check out the latest in fashion.",
+      "pos": "noun",
+      "cachedAt": 1776991423108
+    },
+    "part": {
+      "phonetic": "/pɐːt/",
+      "phoneticUk": "/pɐːt/",
+      "definition": "Duty; responsibility.",
+      "definitionZh": "责任；责任。",
+      "example": "to do one’s part",
+      "pos": "noun",
+      "cachedAt": 1776991423486
+    },
+    "view": {
+      "phonetic": "/vjuː/",
+      "phoneticUk": "/vjuː/",
+      "definition": "A picture, drawn or painted; a sketch.",
+      "definitionZh": "一幅画，画的或画的；一幅草图。",
+      "example": "a fine view of Lake George",
+      "pos": "noun",
+      "cachedAt": 1776991424566
+    },
+    "speaker": {
+      "phonetic": "/ˈspiːkə/",
+      "phoneticUk": "/ˈspiːkə/",
+      "definition": "One who makes a speech to an audience.",
+      "definitionZh": "向听众发表演讲的人。",
+      "example": "The company hired a motivational speaker to boost morale.",
+      "pos": "noun",
+      "cachedAt": 1776991424568
+    },
+    "seat": {
+      "phonetic": "/siːt/",
+      "phoneticUk": "/siːt/",
+      "definition": "To put an object into a place where it will rest; to fix; to set firm.",
+      "definitionZh": "将物体放入休息的地方；固定；固定。",
+      "example": "Be sure to seat the gasket properly before attaching the cover.",
+      "pos": "verb",
+      "cachedAt": 1776991425490
+    },
+    "unable": {
+      "phonetic": "/ʌnˈeɪbəl/",
+      "phoneticUk": "/ʌnˈeɪbəl/",
+      "definition": "Not able; lacking a certain ability.",
+      "definitionZh": "不能；缺乏某种能力。",
+      "example": "Are you unable to mind your own business or something?",
+      "pos": "adjective",
+      "cachedAt": 1776991425574
+    },
+    "blocked": {
+      "phonetic": "",
+      "phoneticUk": "",
+      "definition": "To fill (something) so that it is not possible to pass.",
+      "definitionZh": "填充（某物） ，使其无法通过。",
+      "example": "The pipe is blocked.",
+      "pos": "verb",
+      "cachedAt": 1776991425690
+    },
+    "competitive": {
+      "phonetic": "/kəmˈpɛtɪtɪv/",
+      "phoneticUk": "/kəmˈpɛtɪtɪv/",
+      "definition": "Capable of competing successfully",
+      "definitionZh": "能够成功竞争",
+      "example": "",
+      "pos": "adjective",
+      "cachedAt": 1776991426815
+    },
+    "market": {
+      "phonetic": "/ˈmɑːkɪt/",
+      "phoneticUk": "/ˈmɑːkɪt/",
+      "definition": "A gathering of people for the purchase and sale of merchandise at a set time, often periodic.",
+      "definitionZh": "在一定时间（通常是定期）购买和销售商品的人们聚集在一起。",
+      "example": "The privilege to hold a weekly market was invaluable for any feudal era burgh.",
+      "pos": "noun",
+      "cachedAt": 1776991426858
+    },
+    "areas": {
+      "phonetic": "",
+      "phoneticUk": "",
+      "definition": "Any particular extent of surface, especially an empty or unused extent.",
+      "definitionZh": "任何特定的表面范围，特别是空的或未使用的范围。",
+      "example": "The photo is a little dark in that area.",
+      "pos": "noun",
+      "cachedAt": 1776991427750
+    },
+    "realised": {
+      "phonetic": "/ˈɹɪə.laɪzd/",
+      "phoneticUk": "/ˈɹɪə.laɪzd/",
+      "definition": "To make real; to convert from the imaginary or fictitious into reality; to bring into real existence",
+      "definitionZh": "使真实；从想象或虚构转化为现实；使真实存在",
+      "example": "The objectives of the project were never fully realized.",
+      "pos": "verb",
+      "cachedAt": 1776991427945
+    },
+    "variety": {
+      "phonetic": "/vəˈɹaɪ.ɪ.ti/",
+      "phoneticUk": "/vəˈɹaɪ.ɪ.ti/",
+      "definition": "The quality of being varied; diversity.",
+      "definitionZh": "多样化的品质；多样性。",
+      "example": "Variety is the spice of life.",
+      "pos": "noun",
+      "cachedAt": 1776991427947
+    },
+    "message": {
+      "phonetic": "/ˈmɛsɪd͡ʒ/",
+      "phoneticUk": "/ˈmɛsɪd͡ʒ/",
+      "definition": "A communication, or what is communicated; any concept or information conveyed.",
+      "definitionZh": "沟通，或沟通的内容；传达的任何概念或信息。",
+      "example": "We've just received an urgent message from the President.",
+      "pos": "noun",
+      "cachedAt": 1776991429070
+    },
+    "exciting": {
+      "phonetic": "/ɪkˈsaɪtɪŋ/",
+      "phoneticUk": "/ɪkˈsaɪtɪŋ/",
+      "definition": "To stir the emotions of.",
+      "definitionZh": "激起人们的情绪。",
+      "example": "The fireworks which opened the festivities excited anyone present.",
+      "pos": "verb",
+      "cachedAt": 1776991429805
+    },
+    "critical": {
+      "phonetic": "/ˈkɹɪtɪkəl/",
+      "phoneticUk": "/ˈkɹɪtɪkəl/",
+      "definition": "Inclined to find fault or criticize",
+      "definitionZh": "倾向于发现错误或批评",
+      "example": "A good teacher is fair but critical.",
+      "pos": "adjective",
+      "cachedAt": 1776991430779
+    },
+    "industry": {
+      "phonetic": "/ˈɪndəstɹi/",
+      "phoneticUk": "/ˈɪndəstɹi/",
+      "definition": "The tendency to work persistently. Diligence.",
+      "definitionZh": "坚持工作的倾向。勤奋。",
+      "example": "Over the years, their industry and business sense made them wealthy.",
+      "pos": "noun",
+      "cachedAt": 1776991430785
+    },
+    "unfair": {
+      "phonetic": "/ʌnˈfɛə(ɹ)/",
+      "phoneticUk": "/ʌnˈfɛə(ɹ)/",
+      "definition": "Not fair, unjust",
+      "definitionZh": "不公平、不公正",
+      "example": "It was unfair for the boss to give larger bonuses to his friends.",
+      "pos": "adjective",
+      "cachedAt": 1776991430811
+    },
+    "advice": {
+      "phonetic": "/ədˈvaɪs/",
+      "phoneticUk": "/ədˈvaɪs/",
+      "definition": "An opinion offered in an effort to be helpful.",
+      "definitionZh": "为了提供帮助而提出的意见。",
+      "example": "She was offered various piece of advice on what to do with her new-found wealth.",
+      "pos": "noun",
+      "cachedAt": 1776991431771
+    },
+    "criticise": {
+      "phonetic": "",
+      "phoneticUk": "",
+      "definition": "To find fault (with something).",
+      "definitionZh": "（用某种东西）发现错误。",
+      "example": "They criticized him for endangering people's lives.",
+      "pos": "verb",
+      "cachedAt": 1776991431880
+    },
+    "careers": {
+      "phonetic": "",
+      "phoneticUk": "",
+      "definition": "General course of action or conduct in life, or in a particular part of it.",
+      "definitionZh": "生活中的一般行动或行为，或其特定部分。",
+      "example": "Washington's career as a soldier",
+      "pos": "noun",
+      "cachedAt": 1776991432063
+    },
+    "discussing": {
+      "phonetic": "/dɪsˈkʌsɪŋ/",
+      "phoneticUk": "/dɪsˈkʌsɪŋ/",
+      "definition": "To converse or debate concerning a particular topic.",
+      "definitionZh": "就特定话题进行交谈或辩论。",
+      "example": "I don't wish to discuss this further. Let's talk about something else.",
+      "pos": "verb",
+      "cachedAt": 1776991433178
+    },
+    "future": {
+      "phonetic": "/ˈfjuːt͡ʃə/",
+      "phoneticUk": "/ˈfjuːt͡ʃə/",
+      "definition": "Goodness in what is yet to come. Something to look forward to.",
+      "definitionZh": "善良在即将到来的事情上。值得期待的东西。",
+      "example": "There is no future in dwelling on the past.",
+      "pos": "noun",
+      "cachedAt": 1776991433207
+    },
+    "disagree": {
+      "phonetic": "/dɪsəˈɡɹiː/",
+      "phoneticUk": "/dɪsəˈɡɹiː/",
+      "definition": "To fail to agree; to have a different opinion or belief.",
+      "definitionZh": "不同意；有不同的意见或信仰。",
+      "example": "Bob says cats are friendlier than dogs, but I disagree.",
+      "pos": "verb",
+      "cachedAt": 1776991433215
+    },
+    "assistant": {
+      "phonetic": "/əˈsɪstənt/",
+      "phoneticUk": "/əˈsɪstənt/",
+      "definition": "Having a subordinate or auxiliary position.",
+      "definitionZh": "担任下级或辅助职务。",
+      "example": "an assistant surgeon",
+      "pos": "adjective",
+      "cachedAt": 1776991434111
+    },
+    "unpaid": {
+      "phonetic": "/ʌnˈpeɪd/",
+      "phoneticUk": "/ʌnˈpeɪd/",
+      "definition": "Not paid for.",
+      "definitionZh": "未付款。",
+      "example": "an unpaid bill",
+      "pos": "adjective",
+      "cachedAt": 1776991434132
+    },
+    "career": {
+      "phonetic": "/kəˈɹɪə/",
+      "phoneticUk": "/kəˈɹɪə/",
+      "definition": "General course of action or conduct in life, or in a particular part of it.",
+      "definitionZh": "生活中的一般行动或行为，或其特定部分。",
+      "example": "Washington's career as a soldier",
+      "pos": "noun",
+      "cachedAt": 1776991434570
+    },
+    "realistic": {
+      "phonetic": "/ˌɹiːjəˈlɪstɪk/",
+      "phoneticUk": "/ˌɹiːjəˈlɪstɪk/",
+      "definition": "Expressed or represented as being accurate, practicable, or not idealistic.",
+      "definitionZh": "表达或表示为准确、切实可行或不理想主义。",
+      "example": "A realistic appraisal of the situation.",
+      "pos": "adjective",
+      "cachedAt": 1776991435465
+    },
+    "practice": {
+      "phonetic": "/ˈpɹæktɪs/",
+      "phoneticUk": "/ˈpɹæktɪs/",
+      "definition": "Repetition of an activity to improve a skill.",
+      "definitionZh": "重复一项活动以提高技能。",
+      "example": "He will need lots of practice with the lines before he performs them.",
+      "pos": "noun",
+      "cachedAt": 1776991435519
+    },
+    "dishonest": {
+      "phonetic": "/dɪˈsɒnɪst/",
+      "phoneticUk": "/dɪˈsɒnɪst/",
+      "definition": "Not honest.",
+      "definitionZh": "不诚实。",
+      "example": "",
+      "pos": "adjective",
+      "cachedAt": 1776991435805
+    },
+    "admit": {
+      "phonetic": "/ədˈmɪt/",
+      "phoneticUk": "/ədˈmɪt/",
+      "definition": "To allow to enter; to grant entrance (to), whether into a place, into the mind, or into consideration",
+      "definitionZh": "允许进入；允许进入（进入） ，无论是进入一个地方，进入心灵，还是考虑",
+      "example": "A ticket admits one into a playhouse.",
+      "pos": "verb",
+      "cachedAt": 1776991436766
+    },
+    "mistakes": {
+      "phonetic": "/mɪsˈteɪks/",
+      "phoneticUk": "/mɪsˈteɪks/",
+      "definition": "To understand wrongly, taking one thing or person for another.",
+      "definitionZh": "为了理解错误，将一件事或一个人换成另一件事或另一个人。",
+      "example": "Don't mistake my kindness for weakness.",
+      "pos": "verb",
+      "cachedAt": 1776991436855
+    },
+    "employer": {
+      "phonetic": "/ɛmplɔɪˈə/",
+      "phoneticUk": "/ɛmplɔɪˈə/",
+      "definition": "A person, firm or other entity which pays for or hires the services of another person.",
+      "definitionZh": "支付或雇用他人服务的个人、公司或其他实体。",
+      "example": "",
+      "pos": "noun",
+      "cachedAt": 1776991436996
+    },
+    "earn": {
+      "phonetic": "/ɜːn/",
+      "phoneticUk": "/ɜːn/",
+      "definition": "To gain (success, reward, recognition) through applied effort or work.",
+      "definitionZh": "通过付出努力或工作获得（成功、奖励、认可）。",
+      "example": "You can have the s'mores: you earned them, clearing the walkway of snow so well.",
+      "pos": "verb",
+      "cachedAt": 1776991438029
+    },
+    "lot": {
+      "phonetic": "/lɒt/",
+      "phoneticUk": "/lɒt/",
+      "definition": "A large quantity or number; a great deal.",
+      "definitionZh": "数量或数量很大；非常多。",
+      "example": "lots of people think so",
+      "pos": "noun",
+      "cachedAt": 1776991438076
+    },
+    "attention": {
+      "phonetic": "/əˈtɛn.ʃən/",
+      "phoneticUk": "/əˈtɛn.ʃən/",
+      "definition": "Mental focus.",
+      "definitionZh": "心灵专注",
+      "example": "Please direct your attention to the following words.",
+      "pos": "noun",
+      "cachedAt": 1776991438471
+    },
+    "openly": {
+      "phonetic": "/ˈoʊpənli/",
+      "phoneticUk": "/ˈoʊpənli/",
+      "definition": "In an open manner, visibly, not covertly.",
+      "definitionZh": "以开放的方式，明显地，而不是秘密地。",
+      "example": "",
+      "pos": "adverb",
+      "cachedAt": 1776991439399
+    },
+    "disliking": {
+      "phonetic": "",
+      "phoneticUk": "",
+      "definition": "To leave a vote to show disapproval of, or lack of support for, something posted on the Internet.",
+      "definitionZh": "投票表示不赞成或不支持在互联网上发布的内容。",
+      "example": "Rebecca Black's \"Friday\" video has gained notoriety for being one of the most disliked videos in YouTube history.",
+      "pos": "verb",
+      "cachedAt": 1776991439559
+    },
+    "client": {
+      "phonetic": "/ˈklʌɪənt/",
+      "phoneticUk": "/ˈklʌɪənt/",
+      "definition": "A customer, a buyer or receiver of goods or services.",
+      "definitionZh": "货物或服务的客户、买方或接收方。",
+      "example": "",
+      "pos": "noun",
+      "cachedAt": 1776991439762
+    },
+    "useful": {
+      "phonetic": "/ˈjuːsfəl/",
+      "phoneticUk": "/ˈjuːsfəl/",
+      "definition": "Having a practical or beneficial use.",
+      "definitionZh": "具有实际或有益的用途。",
+      "example": "",
+      "pos": "adjective",
+      "cachedAt": 1776991440701
+    },
+    "retail": {
+      "phonetic": "/ˈɹiˌteɪl/",
+      "phoneticUk": "/ˈɹiˌteɪl/",
+      "definition": "The sale of goods directly to the consumer, encompassing the storefronts, mail-order, websites, etc., and the corporate mechanisms, branding, advertising, etc. that support them.",
+      "definitionZh": "直接向消费者销售商品，包括店面、邮购、网站等，以及支持它们的公司机制、品牌、广告等。",
+      "example": "She works in retail.",
+      "pos": "noun",
+      "cachedAt": 1776991440926
+    },
+    "pieces": {
+      "phonetic": "/ˈpiːsɪz/",
+      "phoneticUk": "/ˈpiːsɪz/",
+      "definition": "A part of a larger whole, usually in such a form that it is able to be separated from other parts.",
+      "definitionZh": "较大整体的一部分，通常以能够与其他部分分开的形式存在。",
+      "example": "I’d like another piece of pie.",
+      "pos": "noun",
+      "cachedAt": 1776991441138
+    },
+    "designs": {
+      "phonetic": "/dɪˈzaɪnz/",
+      "phoneticUk": "/dɪˈzaɪnz/",
+      "definition": "Intention or plot.",
+      "definitionZh": "意图或情节。",
+      "example": "To be hateful of the truth by design.",
+      "pos": "noun",
+      "cachedAt": 1776991442249
+    },
+    "return": {
+      "phonetic": "/ɹɪˈtɜːn/",
+      "phoneticUk": "/ɹɪˈtɜːn/",
+      "definition": "The act of returning.",
+      "definitionZh": "回归的行为。",
+      "example": "I expect the house to be spotless upon my return.",
+      "pos": "noun",
+      "cachedAt": 1776991442254
+    },
+    "items": {
+      "phonetic": "/ˈaɪtəmz/",
+      "phoneticUk": "/ˈaɪtəmz/",
+      "definition": "A distinct physical object.",
+      "definitionZh": "独特的物理对象。",
+      "example": "Tweezers are great for manipulating small items.",
+      "pos": "noun",
+      "cachedAt": 1776991442408
+    },
+    "sizes": {
+      "phonetic": "",
+      "phoneticUk": "",
+      "definition": "The dimensions or magnitude of a thing; how big something is.",
+      "definitionZh": "事物的尺寸或大小；事物的大小。",
+      "example": "The size of the building seemed to have increased since I was last there.",
+      "pos": "noun",
+      "cachedAt": 1776991443568
+    }
+  }
+}

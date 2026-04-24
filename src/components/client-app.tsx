@@ -19,7 +19,6 @@ export default function ClientApp({ initialDates }: { initialDates: string[] }) 
     { date: string; title: string; id: number; content: string; words: WordEntry[] }[]
   >([]);
   const [exportingArticleId, setExportingArticleId] = useState<number | null>(null);
-  const [exportArticleFormat, setExportArticleFormat] = useState<'web' | 'audio' | null>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
@@ -107,40 +106,10 @@ export default function ClientApp({ initialDates }: { initialDates: string[] }) 
     }
   }, [text, words, selectedDate]);
 
-  // Export current words as lightweight HTML (no audio)
-  const handleExportHtml = useCallback(async () => {
+  // Export current words as HTML with embedded base64 audio (works offline)
+  const handleExport = useCallback(async () => {
     if (!words.length) return;
     setExportingArticleId(-1);
-    setExportArticleFormat('web');
-    try {
-      const title = text.slice(0, 50).trim() || `vocabulary-${Date.now()}`;
-      const res = await fetch('/api/export', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ words, title, withAudio: false }),
-      });
-      const data = await res.json();
-      const dlRes = await fetch(`/api/export?download=true&id=${data.id}`);
-      const blob = await dlRes.blob();
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = data.id;
-      a.click();
-      URL.revokeObjectURL(url);
-    } catch {
-      // export failed
-    } finally {
-      setExportingArticleId(null);
-      setExportArticleFormat(null);
-    }
-  }, [words, text]);
-
-  // Export current words as HTML with embedded audio
-  const handleExportAudio = useCallback(async () => {
-    if (!words.length) return;
-    setExportingArticleId(-1);
-    setExportArticleFormat('audio');
     try {
       const title = text.slice(0, 50).trim() || `vocabulary-${Date.now()}`;
       const res = await fetch('/api/export', {
@@ -161,17 +130,15 @@ export default function ClientApp({ initialDates }: { initialDates: string[] }) 
       // export failed
     } finally {
       setExportingArticleId(null);
-      setExportArticleFormat(null);
     }
   }, [words, text]);
 
-  const handleExportArticle = useCallback(async (id: number, title: string, withAudio: boolean) => {
+  const handleExportArticle = useCallback(async (id: number, title: string) => {
     if (exportingArticleId !== null) return;
     setExportingArticleId(id);
-    setExportArticleFormat(withAudio ? 'audio' : 'web');
     try {
-      const audioParam = withAudio ? '&audio=true' : '';
-      const res = await fetch(`/api/articles?export=html${audioParam}&id=${id}`);
+      // Always export with embedded audio
+      const res = await fetch(`/api/articles?export=html&audio=true&id=${id}`);
       if (!res.ok) return;
       const blob = await res.blob();
       const url = URL.createObjectURL(blob);
@@ -182,7 +149,6 @@ export default function ClientApp({ initialDates }: { initialDates: string[] }) 
       URL.revokeObjectURL(url);
     } finally {
       setExportingArticleId(null);
-      setExportArticleFormat(null);
     }
   }, [exportingArticleId]);
 
@@ -265,22 +231,13 @@ export default function ClientApp({ initialDates }: { initialDates: string[] }) 
                     </span>
                   )}
                   {words.length > 0 && (
-                    <>
-                      <button
-                        onClick={handleExportHtml}
-                        disabled={exportingArticleId === -1 && exportArticleFormat === 'web'}
-                        className="px-4 py-2 bg-green-600 hover:bg-green-700 disabled:bg-zinc-300 text-white rounded-lg text-sm font-medium transition-colors"
-                      >
-                        {exportingArticleId === -1 && exportArticleFormat === 'web' ? 'Exporting...' : 'Download (Web)'}
-                      </button>
-                      <button
-                        onClick={handleExportAudio}
-                        disabled={exportingArticleId === -1 && exportArticleFormat === 'audio'}
-                        className="px-4 py-2 bg-purple-600 hover:bg-purple-700 disabled:bg-zinc-300 text-white rounded-lg text-sm font-medium transition-colors"
-                      >
-                        {exportingArticleId === -1 && exportArticleFormat === 'audio' ? 'Generating...' : 'Download (Audio)'}
-                      </button>
-                    </>
+                    <button
+                      onClick={handleExport}
+                      disabled={exportingArticleId === -1}
+                      className="px-4 py-2 bg-green-600 hover:bg-green-700 disabled:bg-zinc-300 text-white rounded-lg text-sm font-medium transition-colors"
+                    >
+                      {exportingArticleId === -1 ? 'Generating...' : 'Download'}
+                    </button>
                   )}
                   <button
                     onClick={handleAnalyze}
@@ -320,18 +277,11 @@ export default function ClientApp({ initialDates }: { initialDates: string[] }) 
                       </div>
                       <div className="flex items-center gap-1 ml-3 flex-shrink-0">
                         <button
-                          onClick={() => handleExportArticle(article.id, article.title, false)}
-                          disabled={exportingArticleId === article.id && exportArticleFormat === 'web'}
+                          onClick={() => handleExportArticle(article.id, article.title)}
+                          disabled={exportingArticleId === article.id}
                           className="text-xs bg-green-100 text-green-700 hover:bg-green-200 disabled:opacity-50 px-2 py-1 rounded-lg transition-colors"
                         >
-                          {exportingArticleId === article.id && exportArticleFormat === 'web' ? '...' : 'Web'}
-                        </button>
-                        <button
-                          onClick={() => handleExportArticle(article.id, article.title, true)}
-                          disabled={exportingArticleId === article.id && exportArticleFormat === 'audio'}
-                          className="text-xs bg-purple-100 text-purple-700 hover:bg-purple-200 disabled:opacity-50 px-2 py-1 rounded-lg transition-colors"
-                        >
-                          {exportingArticleId === article.id && exportArticleFormat === 'audio' ? '...' : 'Audio'}
+                          {exportingArticleId === article.id ? '...' : 'Export'}
                         </button>
                         <button
                           onClick={() => handleDelete(article.id)}
@@ -387,7 +337,7 @@ export default function ClientApp({ initialDates }: { initialDates: string[] }) 
                 <li>See new words beyond middle school level</li>
                 <li>Click the speaker icon to hear British pronunciation</li>
                 <li>Save articles to review by date</li>
-                <li>Export as HTML (with or without embedded audio)</li>
+                <li>Export as HTML with embedded audio (works offline)</li>
               </ol>
             </div>
           </div>

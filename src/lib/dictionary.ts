@@ -96,7 +96,7 @@ export function extractNewWords(text: string): string[] {
   const order = Object.fromEntries(uniqueWords.map((w, i) => [w, i]));
   newWords.sort((a, b) => (order[a] ?? 0) - (order[b] ?? 0));
 
-  return newWords.slice(0, 50);
+  return newWords.slice(0, 100);
 }
 
 async function translateToChinese(text: string): Promise<string> {

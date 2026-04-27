@@ -68,12 +68,10 @@ export async function getArticlesByDate(date: string): Promise<ArticleRecord[]> 
 export async function getAllDates(): Promise<string[]> {
   const sql = getDb();
   await initDb();
-  const rows = await sql<{ date: Date }[]>`
-    SELECT DISTINCT date FROM articles ORDER BY date DESC
+  const rows = await sql<{ date: string }[]>`
+    SELECT DISTINCT date::text AS date FROM articles ORDER BY date DESC
   `;
-  return rows.map((r) =>
-    new Date(r.date).toISOString().split('T')[0]
-  );
+  return rows.map((r) => r.date);
 }
 
 export async function deleteArticle(id: number): Promise<boolean> {

@@ -26,35 +26,18 @@ for (const [lemma, forms] of Object.entries(LEMMA_MAP)) {
 
 // Rule-based lemmatizer suffixes (ordered by specificity)
 const SUFFIX_RULES: [RegExp, string][] = [
-  [/^(.+)ies$/, '$1y'],      // studies → study, tries → try
-  [/^(.+)(sses|ches|shes|xes)$/, '$1$2'], // passes → pass (keep base)
-  [/^(.+)(ss|sh|ch|x|o)es$/, '$1$2'],
-  [/^(.+)es$/, '$1'],         // goes → go (fallback)
-  [/^(.+)ies$/, '$1y'],
-  [/^(.+)(ss|sh|ch|x|z)es$/, '$1$2'],
-  [/^(.+)s$/, '$1'],          // plays → play
-  [/^(.+)ied$/, '$1y'],      // tried → try
-  [/^(.+)ied$/, '$1y'],
-  [/^(.+)([^aeiou])ied$/, '$1$2y'],
-  [/^(.+)([^aeiou])yed$/, '$1$2y'],
-  [/^(.+)ting$/, '$1t'],      // sitting → sit (double consonant)
-  [/^(.+)([bcdfgklmnprstvz])\2ing$/, '$1$2'], // running → run
-  [/^(.+)ning$/, '$1n'],      // running → run
-  [/^(.+)ring$/, '$1r'],
-  [/^(.+)bing$/, '$1b'],
-  [/^(.+)ding$/, '$1d'],
-  [/^(.+)ging$/, '$1g'],
-  [/^(.+)king$/, '$1k'],
-  [/^(.+)ping$/, '$1p'],
-  [/^(.+)sing$/, '$1s'],
-  [/^(.+)ting$/, '$1t'],
-  [/^(.+)wing$/, '$1w'],
-  [/^(.+)ying$/, '$1y'],
-  [/^(.+)ing$/, '$1'],        // playing → play (fallback)
+  [/^(.+)([^aeiou])ied$/, '$1$2y'],      // tried → try
+  [/^(.+)ies$/, '$1y'],                  // studies → study
+  [/^(.+)([bcdfgklmnprstvz])\2ing$/, '$1$2'], // running → run (double consonant)
   [/^(.+)nned$/, '$1n'],
-  [/^(.+)([bcdfgklmnprstvz])\2ed$/, '$1$2'],  // stopped → stop
-  [/^(.+)ied$/, '$1y'],
-  [/^(.+)ed$/, '$1'],         // played → play (fallback)
+  [/^(.+)tted$/, '$1t'],
+  [/^(.+)ssed$/, '$1ss'],                // passed → pass
+  [/^(.+)([^aeiou])\2ed$/, '$1$2'],      // stopped → stop
+  [/^(.+)ing$/, '$1'],                   // playing → play
+  [/^(.+)ed$/, '$1'],                    // played → play
+  [/^(.+)(ss|sh|ch|x|z)es$/, '$1$2'],    // passes → pass, boxes → box
+  [/^(.+(?:[cs]|sh|ch|z|o))es$/, '$1'],  // goes → go, heroes → hero
+  [/^(.+)s$/, '$1'],                     // plays → play, creatures → creature
 ];
 
 function getLemma(word: string): string {
@@ -62,10 +45,10 @@ function getLemma(word: string): string {
   const mapped = REVERSE_LEMMA.get(word);
   if (mapped) return mapped;
 
-  // Try rule-based lemmatization
+  // Try rule-based lemmatization - return base form even if not known
   for (const [pattern, replacement] of SUFFIX_RULES) {
     const base = word.replace(pattern, replacement);
-    if (base !== word && base.length > 1 && isKnownWord(base)) {
+    if (base !== word && base.length > 1) {
       return base;
     }
   }
@@ -74,6 +57,7 @@ function getLemma(word: string): string {
 }
 
 export function extractNewWords(text: string): string[] {
+  // Phase 1: Extract words
   const words = text
     .replace(/['']/g, "'")
     .replace(/[""]/g, '"')
@@ -81,12 +65,51 @@ export function extractNewWords(text: string): string[] {
 
   const uniqueWords = [...new Set(words.map(w => w.toLowerCase().replace(/^'+|'+$/g, '')))];
 
+  // Phase 2: Extract phrasal verbs (verb + particle)
+  // Only capture particles that create meaningful phrasal verbs
+  const PHRASAL_PARTICLES = new Set([
+    'out','up','down','off','over','onto','into','across','through',
+    'to','from','with','against','about'
+  ]);
+  const PHRASES: string[] = [];
+  for (let i = 0; i < words.length - 1; i++) {
+    const curr = words[i].toLowerCase().replace(/^'+|'+$/g, '');
+    const next = words[i + 1].toLowerCase().replace(/^'+|'+$/g, '');
+    if (curr.length < 3 || !PHRASAL_PARTICLES.has(next)) continue;
+
+    const isVerb = (w: string): boolean => {
+      // Regular verb inflections
+      if (w.endsWith('ed') || w.endsWith('ing') || w.endsWith('es') || w.endsWith('ies')) return true;
+      // -s form: check if base looks like a verb (not a known noun)
+      if (w.endsWith('s') && !w.endsWith('ss') && !w.endsWith('us') && !w.endsWith('is')) {
+        const base = w.slice(0, -1);
+        // If base is in known-words, it's a verb
+        if (KNOWN_WORDS.has(base)) return true;
+        // If base looks like a verb (not a common noun pattern), treat as verb
+        if (base.length >= 3 && !base.endsWith('tion') && !base.endsWith('ment') && !base.endsWith('ness') && !base.endsWith('ity')) return true;
+      }
+      // Base form: if it's NOT in known-words and not obviously a noun/adjective
+      if (w.length >= 3 && !w.endsWith('s') && !w.endsWith('tion') && !w.endsWith('ment') && !w.endsWith('ness') && !w.endsWith('ity')) return true;
+      // Check lemma map
+      const mapped = REVERSE_LEMMA.get(w);
+      if (mapped && KNOWN_WORDS.has(mapped)) return true;
+      return false;
+    };
+
+    if (!isVerb(curr)) continue;
+
+    const phraseKey = curr + ' ' + next;
+    if (!PHRASES.includes(phraseKey)) {
+      PHRASES.push(phraseKey);
+    }
+  }
+  const uniquePhrases = [...new Set(PHRASES)];
+
   // Filter: skip if the word itself, its lemma, or its base form is known
   const newWords = uniqueWords.filter(w => {
     if (!w || w.length < 2) return false;
-    // Direct match
+    if (w.length <= 1) return false;
     if (isKnownWord(w)) return false;
-    // Lemma match
     const lemma = getLemma(w);
     if (lemma !== w && isKnownWord(lemma)) return false;
     return true;
@@ -96,7 +119,27 @@ export function extractNewWords(text: string): string[] {
   const order = Object.fromEntries(uniqueWords.map((w, i) => [w, i]));
   newWords.sort((a, b) => (order[a] ?? 0) - (order[b] ?? 0));
 
-  return newWords.slice(0, 100);
+  // Normalize inflected forms to their lemma
+  const normalized = newWords.map(w => {
+    const lemma = getLemma(w);
+    // For -s forms: always normalize
+    if (w !== lemma && w.endsWith('s') && !w.endsWith('ss') && !w.endsWith('us') && !w.endsWith('is')) return lemma;
+    // For -ing/-ed forms: normalize only if explicitly in the lemma map
+    // (this avoids mangling words like "poaching" → "poach" unless there's an explicit mapping)
+    if (w !== lemma && REVERSE_LEMMA.has(w)) return lemma;
+    return w;
+  });
+
+  // Deduplicate after normalization
+  const deduped = [...new Set(normalized)];
+
+  // Remove single words that are part of a phrase
+  const singleWords = deduped.filter(w => {
+    return !uniquePhrases.some(p => p.startsWith(w + ' '));
+  });
+
+  const result = [...singleWords, ...uniquePhrases];
+  return result.slice(0, 100);
 }
 
 async function translateToChinese(text: string): Promise<string> {

@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.6.0] - 2026-04-27
+
+### Word Extraction Optimization
+- **Reduced KNOWN_WORDS from 1441 → 1247**: removed 194 advanced words that aren't middle-school level (elephant, temperature, obviously, cultural, economic, etc.)
+- **Phrase extraction**: detects common verb+particle phrases (tend to, wipe out, flop onto, belongs to, contributes to)
+- **Improved lemmatization**: cleaner suffix rules, added 16 common "dropped-e" word families to lemma-map.json (contribute, replicate, create, manoeuvre, etc.)
+- **Better suffix rules**: fixed "creatures" → "creature" (was incorrectly becoming "creatur")
+- **Lemma-based normalization**: -s forms normalized to base (tends → tend), -ing/-ed forms normalized only when explicitly in lemma map (keeps poaching + poached as separate items)
+
 ## [0.5.2] - 2026-04-24
 
 ### All Exports Now Include Audio
